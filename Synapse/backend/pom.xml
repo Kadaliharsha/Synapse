@@ -66,6 +66,11 @@
 
 
 		<!-- JWT Dependencies -->
+<!-- 		<dependency>
+			<groupId>com.twilio.sdk</groupId>
+			<artifactId>twilio</artifactId>
+			<version>8.32.0</version>
+		</dependency> -->
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt-api</artifactId>
