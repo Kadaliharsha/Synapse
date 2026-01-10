@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../components/layout/NavBar";
-import Carousel from "../components/common/Carousel";
 import Meet from "../components/therapist/Meet";
 import Footer from "../components/layout/Footer";
 import API from "../api/api";
-import Cookies from "js-cookie";
-import image1 from "../assets/Img1.jpg";
-import image2 from "../assets/Img2.jpg";
-import image3 from "../assets/Img3.jpg";
 import ImgCarousel from "../components/layout/ImageCarousel";
 import TherapistHome from "../components/therapist/TherapistHome";
+import Assessment from "../components/common/Assessment";
+import Support from "../components/common/Support";
+
+// Assets
+import home1 from "../assets/home1.jpg";
+import home2 from "../assets/Home2.jpg";
+import home3 from "../assets/Home3.jpg";
+import home4 from "../assets/Home4.jpg";
 
 const Home = () => {
   const [user, setUser] = useState("");
@@ -17,19 +20,17 @@ const Home = () => {
   const [role, setRole] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
-  const images = [image1, image2, image3];
+
+  const heroImages = [home1, home2, home3, home4];
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
-    // Also check token to be sure? Login sets 'token'.
     const token = localStorage.getItem("token");
 
     if (storedUser && token) {
       try {
         const parsedUser = JSON.parse(storedUser);
         const userEmail = parsedUser.email;
-        // roles could be array (Login.json) or string (if legacy). Login.jsx sets it as array `roles`.
-        // Safety check:
         const userRole = Array.isArray(parsedUser.roles) ? parsedUser.roles[0] : parsedUser.role;
 
         if (userEmail && userRole) {
@@ -37,8 +38,6 @@ const Home = () => {
           setIsLoggedIn(true);
 
           const fetchUserDetails = async () => {
-            // ... logic same as before ... 
-            // reusing existing fetch logic structure
             try {
               const response =
                 userRole === "USER"
@@ -68,32 +67,19 @@ const Home = () => {
     }
   }, []);
 
-  let content;
-  if (role === "USER") {
-    content = (
-      <>
-        <Carousel />
-        <Meet />
-      </>
-    );
-  } else if (role === "THERAPIST") {
-    content = (
-      <>
-        <ImgCarousel images={images} />
-        <TherapistHome />
-      </>
-    );
-  } else {
-    content = (
-      <>
-        <Carousel />
-        <Meet />
-      </>
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin"></div>
+          <p className="text-emerald-800 font-medium animate-pulse">Loading Synapse...</p>
+        </div>
+      </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-blue-50 to-purple-50">
+    <div className="min-h-screen bg-gray-50 font-sans text-gray-800 flex flex-col">
       <Navbar
         isLoggedIn={isLoggedIn}
         userName={user}
@@ -101,28 +87,66 @@ const Home = () => {
         role={role}
       />
 
-      {loading ? (
-        <div className="w-full">
-          <div className="h-1.5 w-full bg-primary-100 overflow-hidden">
-            <div className="animate-progress w-full h-full bg-gradient-to-r from-primary-500 to-secondary-500 origin-left-right"></div>
+      <main className="flex-grow pt-24">
+        {/* Hero Headline - Moved outside Carousel */}
+        {!isLoggedIn && (
+          <div className="text-center max-w-5xl mx-auto px-4 mb-8 animate-fade-in-up">
+            <h1 className="text-4xl md:text-6xl font-display font-bold text-gray-900 mb-6 leading-tight">
+              Your Mental Wellness Journey <span className="text-emerald-600 block sm:inline">Starts Here</span>
+            </h1>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto font-medium">
+              Connect with compassionate professionals who understand and support your emotional well-being.
+            </p>
           </div>
-          <div className="flex items-center justify-center min-h-screen">
-            <div className="text-center">
-              <div className="loading-dots mb-4">
-                <div></div>
-                <div></div>
-                <div></div>
+        )}
+
+        {/* Hero Section */}
+        <div className="relative mb-16 px-4 sm:px-6 lg:px-8">
+          <ImgCarousel images={heroImages} />
+        </div>
+
+        {/* User Content */}
+        {role !== "THERAPIST" && (
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20 pb-20">
+
+            {/* Welcome Message */}
+            {isLoggedIn && (
+              <div className="text-center max-w-3xl mx-auto animate-fade-in-up">
+                <h1 className="text-4xl md:text-5xl font-display font-bold mb-4 text-gray-900">
+                  Welcome back, <span className="text-emerald-600">{user.split(' ')[0]}</span>
+                </h1>
+                <p className="text-xl text-gray-500">
+                  How are you feeling today? Take a moment to check in with yourself.
+                </p>
               </div>
-              <p className="text-neutral-600 font-medium">Loading your wellness journey...</p>
+            )}
+
+            {/* Assessment & Support Grid */}
+            <div className="grid md:grid-cols-2 gap-8">
+              <div className="animate-slide-up hover:transform hover:-translate-y-1 transition-transform duration-300">
+                <Assessment />
+              </div>
+              <div className="animate-slide-up" style={{ animationDelay: '0.1s' }}>
+                <Support />
+              </div>
+            </div>
+
+            {/* Therapists Section */}
+            <div id="meet-therapists">
+              <Meet />
             </div>
           </div>
-        </div>
-      ) : (
-        <>
-          {content}
-          <Footer />
-        </>
-      )}
+        )}
+
+        {/* Therapist Content */}
+        {role === "THERAPIST" && (
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <TherapistHome />
+          </div>
+        )}
+      </main>
+
+      <Footer />
     </div>
   );
 };
