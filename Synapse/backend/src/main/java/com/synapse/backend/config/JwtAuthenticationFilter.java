@@ -1,7 +1,6 @@
 package com.synapse.backend.config;
 
-import com.synapse.backend.service.CustomUserDetailsService;
-import com.synapse.backend.service.CustomTherapistDetailsService;
+import com.synapse.backend.service.UnifiedUserDetailsService;
 import com.synapse.backend.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -23,10 +22,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private JwtUtil jwtUtil;
 
     @Autowired
-    private CustomUserDetailsService userDetailsService;
-    
-    @Autowired
-    private CustomTherapistDetailsService therapistDetailsService;
+    private UnifiedUserDetailsService unifiedUserDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
@@ -47,21 +43,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            // Try loading user first, then therapist
-            // Note: This is a bit of a hack because we have dual user types. 
-            // Ideally we should have a single UserDetailsService with roles.
-            UserDetails userDetails = null;
-            try {
-                userDetails = userDetailsService.loadUserByUsername(username);
-            } catch (Exception e) {
-                 try {
-                     userDetails = therapistDetailsService.loadUserByUsername(username);
-                 } catch (Exception ex) {
-                     // Not found
-                 }
-            }
-            
-            if (userDetails != null && jwtUtil.validateToken(jwt, userDetails)) {
+            UserDetails userDetails = this.unifiedUserDetailsService.loadUserByUsername(username);
+
+            if (jwtUtil.validateToken(jwt, userDetails)) {
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
                 usernamePasswordAuthenticationToken
