@@ -1,231 +1,121 @@
-# MindCare - Digital Healthcare Platform
+# Synapse 🧠 
+> **Enterprise-Grade Mental Health Management Platform**
 
-**Transforming Mental Health Support with Modern Technology**
-
-MindCare is a full-featured mental health management platform enabling individuals and professionals to connect, track well-being, and access support resources. Designed with security, accessibility, and scalability in mind, MindCare offers validated surveys, SOS alerts, community features, and rich analytics—all in one place.
-
----
-
-## 🚀 Quick Overview
-
-- **Spring Boot Backend** & **React Frontend**
-- Modern, responsive UI built with Tailwind CSS
-- Secure authentication, therapist & appointment management, emergency support, and much more
+![Java](https://img.shields.io/badge/Java-17%2B-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.4.0-6DB33F?style=for-the-badge&logo=spring&logoColor=white)
+![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-Secure_Auth-000000?style=for-the-badge&logo=json-web-tokens&logoColor=white)
 
 ---
 
-## 📦 Project Structure
+## 💡 Overview
+
+**Synapse** is a modern, scalable digital healthcare platform designed to bridge the gap between mental health professionals and individuals seeking support. Built with a robust **Spring Boot** backend and a responsive **React** frontend, it delivers a secure, seamless experience for appointment booking, crisis management, and progress tracking.
+
+> *"The greatest weapon against stress is our ability to choose one thought over another."*
+
+---
+
+## 🚀 Key Features
+
+### 🛡️ For Users
+- **Secure Authentication:** JWT-based login with role-based access control.
+- **Therapist Discovery:** Browse licensed professionals and book appointments instantly.
+- **Crisis Support (SOS):** One-tap emergency alerts via **Twilio SMS integration**.
+- **Self-Assessment:** Validated mental health surveys with instant, visualized feedback.
+- **Progress Tracking:** Beautiful analytics charts to monitor well-being over time.
+
+### 👩‍⚕️ For Therapists & Admins
+- **Practice Management:** Set availability, manage client sessions, and view history.
+- **Content Management:** Publish blogs and educational resources.
+- **Analytics Dashboard:** Insights into user engagement and platform usage.
+
+---
+
+## 🛠️ Technology Stack
+
+| Component | Technology | Description |
+|-----------|------------|-------------|
+| **Backend** | Spring Boot 3 | RESTful API, Security, Business Logic |
+| **Database** | MySQL | Relational Data Persistence |
+| **Security** | Spring Security + JWT | Stateless Authentication & Authorization |
+| **Frontend** | React + Vite | Fast, Component-Based UI |
+| **Styling** | Tailwind CSS | Utility-First, Responsive Design |
+| **Icons** | React Icons | Modern Iconography |
+| **Communication** | Twilio API | SMS & Emergency Alerts |
+
+---
+
+## 📦 Project Architecture
+
+The project follows a clean, layered architecture separating concerns for maintainability and scalability:
 
 ```
-Mindcare/
-├── backend/          # Spring Boot Backend
-│   ├── src/
-│   ├── pom.xml
+Synapse/
+├── backend/                  # Spring Boot Service
+│   ├── src/main/java/com/synapse/backend/
+│   │   ├── config/           # Security & App Config
+│   │   ├── controller/       # REST API Endpoints
+│   │   ├── dto/              # Data Transfer Objects
+│   │   ├── model/            # JPA Entities
+│   │   ├── repository/       # Data Access Layer
+│   │   └── service/          # Business Logic
 │   └── ...
-└── frontend/         # React Frontend
+└── frontend/                 # React SPA
     ├── src/
-    ├── package.json
+    │   ├── components/       # Reusable UI Components
+    │   ├── pages/            # View/Route Controllers
+    │   ├── api/              # Axios Interceptors
+    │   └── assets/           # Static Media
     └── ...
 ```
 
 ---
 
-## 📋 Features
-
-### Backend
-
-- User authentication and authorization (JWT)
-- Therapist profile & availability management
-- Appointment scheduling and reminders
-- Blog/content/resource management
-- Emergency contact system
-- SOS functionality (Twilio SMS integration)
-- Feedback and progress tracking
-- Crisis hotline management
-- Analytics & admin dashboards
-
-### Frontend
-
-- Modern, responsive UI with Tailwind CSS
-- User dashboard: surveys, appointments, progress charts
-- Therapist dashboard: manage sessions, profiles, and client lists
-- Blog creation and viewing, categorized resources
-- Community groups: join, post, comment, report
-- Emergency support (SOS button, contact management)
-- Assessment tools with instant feedback
-
----
-
-## 🧑‍💻 Technology Stack
-
-### Backend
-
-- Spring Boot 3.x
-- Spring Security
-- Spring Data JPA
-- MySQL Database
-- Twilio (for SMS notifications)
-- Maven
-
-### Frontend
-
-- React 18
-- Vite
-- Tailwind CSS
-- React Router
-- Axios
-- npm or yarn
-
----
-
-## 🏗 Architecture
-
-- **Frontend:** React (Vite) SPA, communicates with backend via REST APIs
-- **Backend:** Spring Boot REST API, MySQL database
-- **Authentication:** JWT-based
-- **Notifications:** Twilio SMS, email via SendGrid or SMTP
-- **Deployment:** Docker-ready, CI/CD via GitHub Actions
-
-**Access Points:**
-- Frontend: `http://localhost:5173`
-- Backend API: `http://localhost:8080/api/v1/`
-- Backend Health: `http://localhost:8080/actuator/health`
-
----
-
-## ⚡ Setup Instructions
+## ⚡ Getting Started
 
 ### Prerequisites
+- **Java JDK 17+**
+- **Node.js 16+** & **npm**
+- **MySQL Server**
 
-#### Backend
-- Java 17+
-- Maven 3.6+
-- MySQL database
-
-#### Frontend
-- Node.js 16+
-- npm or yarn
-
-### Backend Setup
-
+### 1. Backend Setup
 ```bash
-cd Mindcare/backend
+cd backend
+# Update src/main/resources/application.properties with your MySQL creds
+mvn spring-boot:run
 ```
-- Configure database in `src/main/resources/application.properties`
-- Run the application:
-  ```bash
-  mvn spring-boot:run
-  ```
 
-### Frontend Setup
-
+### 2. Frontend Setup
 ```bash
-cd Mindcare/frontend
+cd frontend
+npm install
+npm run dev
 ```
-- Install dependencies:
-  ```bash
-  npm install
-  ```
-- Start the development server:
-  ```bash
-  npm run dev
-  ```
+
+Visit `http://localhost:5173` to view the application.
 
 ---
 
-## 📚 User & Admin
+## 👥 Contributing
 
-<details>
-<summary>Expand for full details</summary>
-
-### Users
-1. **Registration & Login:** Email/password signup, confirmation, password reset.
-2. **Profile:** Name, age, photo, location, emergency contacts.
-3. **Survey:** Assess mental health, get instant, personalized recommendations.
-4. **Emergency Contacts:** Add/edit/delete contacts, confirmation messages.
-5. **Appointments:** View/book/cancel/reschedule, reminders via email/SMS.
-6. **Community:** Join, post, comment, get notifications, report violations.
-7. **Progress Tracking:** Charts, monthly trends, PDF export.
-8. **SOS:** Send location-based alerts to contacts.
-
-### Admins
-9. **Therapist Management:** Add/update/remove, set availability, booking notifications.
-10. **Hotline Management:** Add/update, location-based dashboards, inactivity alerts.
-11. **Resource Content:** Upload/edit/remove articles, categorize for easy access.
-12. **Analytics:** User engagement, trends, exportable data.
-13. **Community Oversight:** Create/edit groups, appoint moderators, handle reports.
-
-</details>
-
----
-
-## 🗄 Database & API
-
-- All API endpoints prefixed with `/api/v1/`
-- Backend health check: `/actuator/health`
-- See [`docs/api.md`](docs/api.md) for endpoint details
-
-<details>
-<summary>Sample Database Entities</summary>
-
-- **User:** id, name, email, password, age, profile picture, location, emergency contacts
-- **Therapist:** id, name, specialty, availability, profile, appointments
-- **Appointment:** id, user_id, therapist_id, scheduled_time, status
-- **Survey:** id, user_id, answers, result, timestamp
-- **EmergencyContact:** id, user_id, name, phone
-- **Group:** id, name, description, members, posts
-- **Post:** id, group_id, user_id, content, timestamp
-- **Resource/Blog:** id, title, content, category, author
-</details>
-
----
-
-## 🛠 Development Notes
-
-- Project reorganized from nested structure for maintainability
-- Functionality remains the same; organization improved
-
----
-
-## 🤝 Contributing
-
-Contributions, bug reports, and feature requests are welcome!
-
-- Fork the repository
-- Create your feature branch (`git checkout -b feature/AmazingFeature`)
-- Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-- Push to the branch (`git push origin feature/AmazingFeature`)
-- Open a Pull Request
-
-See [`CONTRIBUTING.md`](CONTRIBUTING.md) for guidelines.
-
----
-
-## ❓ FAQ & Troubleshooting
-
-- **How do I reset my password?**  
-  Use the "Forgot Password" link on the login page.
-
-- **How do I get help?**  
-  Contact the team or open an issue.
-
-- **What platforms are supported?**  
-  Web app, responsive design for mobile.
-
----
-
-## 📬 Contact
-
-*Kadali Harshavardhan*  
-- [LinkedIn](https://linkedin.com/in/Kadaliharsha)
-- [Email](mailto:kadali.hrv@email.com)
+We welcome contributions! Please follow these steps:
+1. Fork the repository.
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`).
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`).
+4. Push to the branch (`git push origin feature/AmazingFeature`).
+5. Open a Pull Request.
 
 ---
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
 
-> *Mindcare: Because your mental well-being matters.*
+<p align="center">
+  <b>Synapse</b> &bull; Built with ❤️ by Kadali Harshavardhan
+</p>
