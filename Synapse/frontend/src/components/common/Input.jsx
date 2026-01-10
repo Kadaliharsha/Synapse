@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FaCheck } from "react-icons/fa";
 import { BiSolidPencil } from "react-icons/bi";
 
-const Input = ({ label, value, onChange, onSave }) => {
+const Input = ({ label, value, onChange, onSave, className = "", disabled = false }) => {
   const [isEdit, setIsEdit] = useState(false);
 
   const handleSave = () => {
@@ -11,33 +11,34 @@ const Input = ({ label, value, onChange, onSave }) => {
   };
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 w-full">
-      <label className="text-neutral-600 font-medium w-full sm:w-24 text-left">
-        {label}:
+    <div className={`flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 w-full ${className}`}>
+      <label className="text-gray-600 font-medium w-full sm:w-24 text-left text-sm uppercase tracking-wide">
+        {label}
       </label>
-      {isEdit ? (
-        <div className="flex-grow relative bg-neutral-50 border border-primary-200 h-[50px] rounded-lg flex items-center shadow-inner transition-all duration-300">
+      {isEdit && !disabled ? (
+        <div className="flex-grow relative bg-white/60 backdrop-blur-sm border border-emerald-500 h-[50px] rounded-xl flex items-center shadow-sm transition-all duration-300 ring-2 ring-emerald-100">
           <input
             type="text"
             value={value}
             onChange={onChange}
-            className="bg-transparent text-neutral-800 text-lg p-3 pl-4 outline-none w-full h-full rounded-lg"
+            className="bg-transparent text-gray-800 text-base p-3 pl-4 outline-none w-full h-full rounded-xl"
+            autoFocus
           />
           <button
             onClick={handleSave}
-            className="absolute right-3 p-2 text-success-600 hover:text-success-700 hover:bg-success-50 rounded-full transition-colors"
+            className="absolute right-3 p-2 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-full transition-colors"
           >
             <FaCheck />
           </button>
         </div>
       ) : (
-        <div className={`flex-grow relative p-3 pl-4 h-[50px] rounded-lg flex items-center border transition-all duration-300 ${onSave ? "bg-neutral-50 border-neutral-200" : "bg-neutral-100 border-transparent text-neutral-500 cursor-not-allowed"
+        <div className={`flex-grow relative p-3 pl-4 h-[50px] rounded-xl flex items-center border transition-all duration-300 ${onSave && !disabled ? "bg-white/40 border-white/40 hover:border-emerald-200" : "bg-gray-50/50 border-transparent text-gray-400 cursor-not-allowed"
           }`}>
-          <span className="text-neutral-800 text-lg">{value}</span>
-          {onSave && (
+          <span className="text-gray-800 text-base font-medium">{value}</span>
+          {onSave && !disabled && (
             <button
               onClick={() => setIsEdit(true)}
-              className="absolute right-3 p-2 text-primary-600 hover:text-primary-700 hover:bg-primary-50 rounded-full transition-colors"
+              className="absolute right-3 p-2 text-emerald-500 hover:text-emerald-600 hover:bg-emerald-50/80 rounded-full transition-colors opacity-60 hover:opacity-100"
             >
               <BiSolidPencil className="text-lg" />
             </button>

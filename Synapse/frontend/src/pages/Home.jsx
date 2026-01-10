@@ -20,32 +20,49 @@ const Home = () => {
   const images = [image1, image2, image3];
 
   useEffect(() => {
-    const userEmail = Cookies.get("email");
-    const userRole = Cookies.get("role");
+    const storedUser = localStorage.getItem("user");
+    // Also check token to be sure? Login sets 'token'.
+    const token = localStorage.getItem("token");
 
-    if (userEmail && userRole) {
-      setRole(userRole);
-      setIsLoggedIn(true);
+    if (storedUser && token) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        const userEmail = parsedUser.email;
+        // roles could be array (Login.json) or string (if legacy). Login.jsx sets it as array `roles`.
+        // Safety check:
+        const userRole = Array.isArray(parsedUser.roles) ? parsedUser.roles[0] : parsedUser.role;
 
-      const fetchUserDetails = async () => {
-        try {
-          const response =
-            userRole === "USER"
-              ? await API.get(`/user/${userEmail}`)
-              : await API.get(`/therapist/${userEmail}`);
+        if (userEmail && userRole) {
+          setRole(userRole);
+          setIsLoggedIn(true);
 
-          if (response.status === 200) {
-            setUser(response.data.name);
-            setAvatar(response.data.profilePicture || "");
-          }
-        } catch (error) {
-          console.error("Error fetching user details:", error);
-        } finally {
+          const fetchUserDetails = async () => {
+            // ... logic same as before ... 
+            // reusing existing fetch logic structure
+            try {
+              const response =
+                userRole === "USER"
+                  ? await API.get(`/user/${userEmail}`)
+                  : await API.get(`/therapist/${userEmail}`);
+
+              if (response.status === 200) {
+                setUser(response.data.name);
+                setAvatar(response.data.profilePicture || "");
+              }
+            } catch (error) {
+              console.error("Error fetching user details:", error);
+            } finally {
+              setLoading(false);
+            }
+          };
+          fetchUserDetails();
+        } else {
           setLoading(false);
         }
-      };
-
-      fetchUserDetails();
+      } catch (e) {
+        console.error("Error parsing user data", e);
+        setLoading(false);
+      }
     } else {
       setLoading(false);
     }

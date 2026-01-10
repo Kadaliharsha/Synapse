@@ -1,6 +1,9 @@
+// No changes needed if the plan is just to rely on the parent padding fix.
+// But to be safe, I'll update the component to ensure it consumes full width properly.
 import React, { useState } from "react";
 import Cookies from "js-cookie";
 import API from "../../api/api";
+import { FaPlus } from "react-icons/fa";
 
 const ADDE = ({ addContact }) => {
   const [newContact, setNewContact] = useState({
@@ -8,6 +11,8 @@ const ADDE = ({ addContact }) => {
     phone: "",
     relationship: "",
   });
+  const [loading, setLoading] = useState(false);
+  // ... existing code ...
 
   const getUserEmail = () => {
     const storedUser = localStorage.getItem("user");
@@ -31,9 +36,9 @@ const ADDE = ({ addContact }) => {
     e.preventDefault();
 
     if (!userEmail) {
-      alert("No user logged in!");
       return;
     }
+    setLoading(true);
 
     const contactData = {
       userId: userEmail,
@@ -49,77 +54,75 @@ const ADDE = ({ addContact }) => {
       );
 
       if (response.status === 200) {
-        alert("Contact saved successfully!");
-        addContact(contactData); // Call the addContact function passed from the parent
-        setNewContact({ name: "", phone: "", relationship: "" }); // Reset form fields
+        addContact(contactData);
+        setNewContact({ name: "", phone: "", relationship: "" });
       }
     } catch (error) {
       console.error("Error saving contact:", error);
-      alert("Failed to save contact. Please try again.");
+      alert("Failed to save contact.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="w-full bg-white drop-shadow-md p-10">
-      <h2 className="text-4xl text-center font-semibold text-[#109948] mb-8">
-        Add your Emergency Contacts
-      </h2>
-
-      <form onSubmit={handleSubmit}>
-        <div className="flex justify-between items-center m-auto w-[500px] mb-4">
-          <label className="text-[#109948] w-[150px] text-left pr-4 text-[16px]">
-            Name:
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
+            Name
           </label>
           <input
             type="text"
             name="name"
             value={newContact.name}
             onChange={handleChange}
-            placeholder="Enter name"
-            className="text-[#000] bg-[#f6f6f6] text-[18px] p-3 pl-4 outline-none w-full rounded-md"
+            placeholder="e.g. John Doe"
+            className="w-full px-4 py-2 rounded-lg bg-gray-50 border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all text-sm"
             required
           />
         </div>
 
-        <div className="flex justify-between items-center m-auto w-[500px] mb-6">
-          <label className="text-[#109948] w-[150px] text-left pr-4 text-[16px]">
-            Phone:
+        <div>
+          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
+            Phone
           </label>
           <input
             type="tel"
             name="phone"
             value={newContact.phone}
             onChange={handleChange}
-            placeholder="Enter phone number"
-            className="text-[#000] bg-[#f6f6f6] text-[18px] p-3 pl-4 outline-none w-full rounded-md"
+            placeholder="e.g. +1 234..."
+            className="w-full px-4 py-2 rounded-lg bg-gray-50 border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all text-sm"
             required
           />
         </div>
-        <div className="flex justify-between items-center m-auto w-[500px] mb-6">
-          <label className="text-[#109948] w-[150px] text-left pr-4 text-[16px]">
-            Realtion:
-          </label>
+      </div>
+
+      <div>
+        <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
+          Relationship
+        </label>
+        <div className="flex gap-3">
           <input
             type="text"
             name="relationship"
             value={newContact.relationship}
             onChange={handleChange}
-            placeholder="what is your Realtion?"
-            className="text-[#000] bg-[#f6f6f6] text-[18px] p-3 pl-4 outline-none w-full rounded-md"
+            placeholder="e.g. Brother, Friend"
+            className="flex-grow px-4 py-2 rounded-lg bg-gray-50 border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all text-sm"
             required
           />
-        </div>
-
-        <div className="flex justify-center">
           <button
             type="submit"
-            className="w-[150px] h-[50px] bg-[#109948] hover:bg-[#008055] text-white text-[18px] font-semibold rounded-lg transition-all duration-300"
+            disabled={loading}
+            className="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-colors flex items-center gap-2 text-sm disabled:opacity-50 shadow-lg shadow-emerald-200"
           >
-            SAVE
+            {loading ? 'Top...' : <><FaPlus size={12} /> Add</>}
           </button>
         </div>
-      </form>
-    </div>
+      </div>
+    </form>
   );
 };
 

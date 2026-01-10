@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../../api/api";
 import Cookies from "js-cookie";
+import GlassCard from "../common/GlassCard";
 
 const Analysis = () => {
   const [weeklyPoints, setWeeklyPoints] = useState([0, 0, 0, 0, 0, 0, 0]); // Mon to Sun
@@ -17,10 +18,11 @@ const Analysis = () => {
   };
 
   const getColor = (status) => {
-    if (status === "Good") return "green";
-    if (status === "Needs Improvement") return "orange";
-    return "red";
+    if (status === "Good") return "emerald";
+    if (status === "Needs Improvement") return "amber";
+    return "rose";
   };
+
   useEffect(() => {
     const fetchData = async () => {
       let email;
@@ -28,7 +30,6 @@ const Analysis = () => {
       if (storedUser) {
         email = JSON.parse(storedUser).email;
       } else {
-        // Fallback to cookie if localStorage is empty (transition period)
         email = Cookies.get("email");
       }
 
@@ -36,59 +37,38 @@ const Analysis = () => {
 
       try {
         const response = await API.get(`/user/feedback/${email}`);
-        console.log("Response Data:", response.data);
-
         if (response.status === 200) {
           const feedbackData = response.data;
+          let points = [0, 0, 0, 0, 0, 0, 0];
 
-          let points = [0, 0, 0, 0, 0, 0, 0]; // Monday to Sunday
-
-          // Get current week range (Monday to Sunday)
           const today = new Date();
           const currentWeekStart = new Date(today);
-          currentWeekStart.setDate(today.getDate() - today.getDay() + 1); // Start of the week (Monday)
-          currentWeekStart.setHours(0, 0, 0, 0); // Start at midnight
+          currentWeekStart.setDate(today.getDate() - today.getDay() + 1);
+          currentWeekStart.setHours(0, 0, 0, 0);
 
           const currentWeekEnd = new Date(currentWeekStart);
-          currentWeekEnd.setDate(currentWeekStart.getDate() + 6); // End of the week (Sunday)
-          currentWeekEnd.setHours(23, 59, 59, 999); // End at the last second of Sunday
+          currentWeekEnd.setDate(currentWeekStart.getDate() + 6);
+          currentWeekEnd.setHours(23, 59, 59, 999);
 
-          const formatDate = (date) => date.toISOString().split("T")[0]; // Format as 'yyyy-mm-dd'
-
+          const formatDate = (date) => date.toISOString().split("T")[0];
           const currentWeekStartFormatted = formatDate(currentWeekStart);
           const currentWeekEndFormatted = formatDate(currentWeekEnd);
-
-          console.log(
-            "Current Week Start (Formatted):",
-            currentWeekStartFormatted
-          );
-          console.log("Current Week End (Formatted):", currentWeekEndFormatted);
 
           const scores = feedbackData.scores;
 
           Object.entries(scores).forEach(([date, score]) => {
-            console.log(`Processing Date: ${date}, Score: ${score}`);
-
-            if (
-              date >= currentWeekStartFormatted &&
-              date <= currentWeekEndFormatted
-            ) {
+            if (date >= currentWeekStartFormatted && date <= currentWeekEndFormatted) {
               const feedbackDate = new Date(date);
-              // Adjusting Sunday (getDay() === 0) to index 6 (last day of the week)
-              const dayIndex =
-                feedbackDate.getDay() === 0 ? 6 : feedbackDate.getDay() - 1;
-              points[dayIndex] = score; // Assign score to the correct day index
+              const dayIndex = feedbackDate.getDay() === 0 ? 6 : feedbackDate.getDay() - 1;
+              points[dayIndex] = score;
             }
           });
 
-          console.log("Updated Weekly Points:", points);
-
           setWeeklyPoints(points);
-
           const total = points.reduce((sum, point) => sum + point, 0);
           const avgPoints = total / 7;
-
           setTotalPoints(total);
+
           const currentStatus = getStatus(avgPoints);
           setStatus(currentStatus);
           setStatusColor(getColor(currentStatus));
@@ -102,53 +82,59 @@ const Analysis = () => {
   }, []);
 
   return (
-    <section className="mt-5 w-full h-[450px] flex items-center justify-center mb-[100px]">
-      <div className="w-[88%] h-[95%] bg-white  drop-shadow-md">
-        <h2 className="m-10 text-4xl font-semibold text-left text-gray-400">
-          8. Weekly Process
-        </h2>
-        <div className="flex w-full h-full bg-white">
-          <div className="w-[70%] flex justify-around items-end p-5">
-            {weeklyPoints.map((points, index) => (
-              <div key={index}>
-                <div
-                  className="w-[60px] bg-[#DE3163] rounded-md"
-                  style={{ height: `${points * 3}px` }}
-                ></div>
-                <p className="text-center text-[16px] text-gray-400">
-                  {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][index]}
-                </p>
+    <GlassCard className="w-full">
+      <h2 className="text-xl font-bold text-gray-800 mb-8">Weekly Wellness Tracker</h2>
+
+      <div className="flex flex-col lg:flex-row gap-12 items-center">
+        {/* Chart Section */}
+        <div className="flex-grow w-full lg:w-2/3 h-64 flex items-end justify-between gap-2 sm:gap-4 px-2">
+          {weeklyPoints.map((points, index) => {
+            const heightPercentage = Math.min((points / 100) * 100, 100); // Assuming max points per day is 100
+            return (
+              <div key={index} className="flex flex-col items-center gap-3 flex-1 h-full justify-end group">
+                <div className="relative w-full max-w-[40px] bg-gray-100 rounded-lg h-full overflow-hidden flex items-end hover:bg-gray-200 transition-colors">
+                  <div
+                    className="w-full rounded-lg bg-emerald-500 group-hover:bg-emerald-400 transition-all duration-500 ease-out"
+                    style={{ height: `${heightPercentage}%`, minHeight: points > 0 ? '4px' : '0' }}
+                  ></div>
+                  {points > 0 && <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">{points} pts</div>}
+                </div>
+                <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">{["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][index]}</span>
               </div>
-            ))}
+            )
+          })}
+        </div>
+
+        {/* Score Section */}
+        <div className="w-full lg:w-1/3 flex flex-col items-center">
+          <div className={`relative w-48 h-48 rounded-full border-8 flex flex-col items-center justify-center mb-6 transition-colors duration-500
+                    ${statusColor === 'emerald' ? 'border-emerald-100 bg-emerald-50/30' :
+              statusColor === 'amber' ? 'border-amber-100 bg-amber-50/30' :
+                'border-rose-100 bg-rose-50/30'}`}
+          >
+            <span className="text-4xl font-bold text-gray-800">{totalPoints}</span>
+            <span className="text-sm text-gray-500 font-medium uppercase tracking-wide mt-1">Total Points</span>
           </div>
 
-          <div className="w-[30%] flex flex-col items-center justify-center bg-purple-100 mb-[20px] mr-[15px] rounded-[20px] drop-shadow-md">
-            <div
-              className={`w-40 h-40 rounded-full border-8 flex items-center justify-center mb-[20px]`}
-              style={{
-                borderColor: statusColor,
-              }}
+          <h3 className={`text-2xl font-bold mb-2 text-center
+                     ${statusColor === 'emerald' ? 'text-emerald-600' :
+              statusColor === 'amber' ? 'text-amber-600' :
+                'text-rose-600'}`
+          }>
+            {status}
+          </h3>
+
+          {(status === "Needs Improvement" || status === "Consult Therapist") && (
+            <button
+              className="mt-4 bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-xl transition-all shadow-lg shadow-emerald-200 transform hover:-translate-y-0.5"
+              onClick={() => navigate("/therapistDb")}
             >
-              <p className="text-2xl font-semibold">{totalPoints} pts</p>
-            </div>
-            <h2
-              className={`text-5xl font-semibold text-${statusColor}-500 mb-4`}
-            >
-              {status}
-            </h2>
-            {(status === "Needs Improvement" ||
-              status === "Consult Therapist") && (
-                <button
-                  className="bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-all text-[14px] mt-8"
-                  onClick={() => navigate("/therapist")}
-                >
-                  Consult Therapist
-                </button>
-              )}
-          </div>
+              Book Consultation
+            </button>
+          )}
         </div>
       </div>
-    </section>
+    </GlassCard>
   );
 };
 

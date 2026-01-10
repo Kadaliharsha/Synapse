@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import AddEmergencyContact from "./AddEmergencyContact";
 import ShowEmergencyContacts from "./ShowEmergencyContacts";
+import GlassCard from "../common/GlassCard";
 import API from "../../api/api";
 import Cookies from "js-cookie";
 
@@ -32,11 +33,12 @@ const EMGC = () => {
   };
 
   useEffect(() => {
-    if (!userEmail) {
-      alert("No user logged in!");
-      return;
-    }
-    fetchContacts(); // Initial fetch when component mounts
+    /* if (!userEmail) {
+       // Preventing alert spam on load if user is redirecting
+       // alert("No user logged in!");
+       return;
+     } */
+    if (userEmail) fetchContacts();
   }, [userEmail]);
 
   // Function to add new contact
@@ -59,7 +61,6 @@ const EMGC = () => {
               contact.relationship !== relationship
           )
         );
-        alert("Contact deleted successfully.");
       }
     } catch (error) {
       console.error("Error deleting contact:", error);
@@ -67,11 +68,37 @@ const EMGC = () => {
     }
   };
 
+  const updateContact = async (oldPhone, oldRel, updatedContact) => {
+    try {
+      // Optimistic update
+      const newContacts = contacts.map(c =>
+        (c.phoneNumber === oldPhone && c.relationship === oldRel) ? updatedContact : c
+      );
+      setContacts(newContacts);
+
+      const response = await API.put(`/emergency-contacts/update/${userEmail}`, newContacts);
+
+      if (response.status !== 200) {
+        // Revert on failure (reload logic or manual revert)
+        alert("Failed to update contact.");
+        fetchContacts(); // Reload to sync with server
+      }
+    } catch (error) {
+      console.error("Error updating contact:", error);
+      alert("Failed to update contact.");
+      fetchContacts();
+    }
+  };
+
   return (
-    <>
-      <AddEmergencyContact addContact={addContact} />
-      <ShowEmergencyContacts contacts={contacts} deleteContact={deleteContact} />
-    </>
+    <GlassCard className="h-full flex flex-col !p-0 overflow-hidden">
+      <div className="p-6 sm:p-8 flex-grow overflow-y-auto custom-scrollbar">
+        <h3 className="text-xl font-bold text-gray-800 mb-6">Emergency Contacts</h3>
+        <AddEmergencyContact addContact={addContact} />
+        <div className="my-6 border-b border-gray-100"></div>
+        <ShowEmergencyContacts contacts={contacts} deleteContact={deleteContact} updateContact={updateContact} />
+      </div>
+    </GlassCard>
   );
 };
 
