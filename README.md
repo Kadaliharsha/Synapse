@@ -39,7 +39,7 @@
 | Component | Technology | Description |
 |-----------|------------|-------------|
 | **Backend** | Spring Boot 3 | RESTful API, Security, Business Logic |
-| **Database** | MySQL | Relational Data Persistence |
+| **Database** | MongoDB | NoSQL Document Store |
 | **Security** | Spring Security + JWT | Stateless Authentication & Authorization |
 | **Frontend** | React + Vite | Fast, Component-Based UI |
 | **Styling** | Tailwind CSS | Utility-First, Responsive Design |
