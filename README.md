@@ -5,7 +5,7 @@
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.4.0-6DB33F?style=for-the-badge&logo=spring&logoColor=white)
 ![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
-![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-4.4-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
 ![JWT](https://img.shields.io/badge/JWT-Secure_Auth-000000?style=for-the-badge&logo=json-web-tokens&logoColor=white)
 
 ---
@@ -79,12 +79,12 @@ Synapse/
 ### Prerequisites
 - **Java JDK 17+**
 - **Node.js 16+** & **npm**
-- **MySQL Server**
+- **MongoDB Atlas** (Cloud) or **MongoDB Local**
 
 ### 1. Backend Setup
 ```bash
 cd backend
-# Update src/main/resources/application.properties with your MySQL creds
+# Update src/main/resources/application.properties with your MongoDB creds
 mvn spring-boot:run
 ```
 
