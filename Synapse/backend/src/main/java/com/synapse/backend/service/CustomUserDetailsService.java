@@ -3,6 +3,7 @@ package com.synapse.backend.service;
 import com.synapse.backend.model.Users;
 import com.synapse.backend.repository.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
