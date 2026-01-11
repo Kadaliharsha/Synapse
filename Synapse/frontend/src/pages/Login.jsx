@@ -2,7 +2,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import Image from "../assets/login_hero.png";
 import Logo from "../assets/logo.png";
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import API from "../api/api.js";
 
 const Login = () => {
@@ -12,6 +12,7 @@ const Login = () => {
   });
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -30,8 +31,8 @@ const Login = () => {
         localStorage.setItem("user", JSON.stringify({ name, roles, email: loginCredentials.email }));
 
         // Check for redirect param
-        const urlParams = new URLSearchParams(window.location.search);
-        const redirectPath = urlParams.get('redirect');
+        const searchParams = new URLSearchParams(location.search);
+        const redirectPath = searchParams.get('redirect');
 
         if (redirectPath) {
           window.location.href = redirectPath;
