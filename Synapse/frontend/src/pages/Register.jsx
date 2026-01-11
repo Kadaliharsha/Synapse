@@ -88,7 +88,10 @@ const Register = () => {
       });
       setConfirmPassword("");
 
-      navigate("/login");
+      setConfirmPassword("");
+
+      // Redirect to login, but tell Login page to send them to Home (Lobby) after
+      navigate("/login?redirect=/");
     } catch (error) {
       console.error(error);
       const errorMsg = error.response ? error.response.data : "Signup failed. Please try again.";
