@@ -40,7 +40,7 @@ const Login = () => {
         }
 
         if (roles[0] === "USER") {
-          window.location.href = "/userDb";
+          window.location.href = "/";
         } else if (roles[0] === "THERAPIST") {
           window.location.href = "/therapistDb";
         } else {
