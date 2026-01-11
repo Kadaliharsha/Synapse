@@ -1,101 +1,119 @@
 import React from "react";
+import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn, FaLeaf } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
-    <footer className="bg-gradient-to-r from-primary-700 via-primary-800 to-secondary-800 text-white">
-      <div className="container mx-auto px-6 py-12">
-        <div className="grid md:grid-cols-4 gap-8">
+    <footer className="bg-white text-neutral-600 pt-20 pb-10 border-t border-neutral-200">
+      <div className="container mx-auto px-6">
+        <div className="grid md:grid-cols-4 gap-12 mb-16">
           {/* Brand Section */}
-          <div className="md:col-span-2">
-            <h3 className="text-2xl font-display font-bold mb-4 gradient-text">
-              Synapse
-            </h3>
-            <p className="text-neutral-200 mb-6 leading-relaxed">
-              Your trusted partner in mental wellness. We're committed to providing
-              compassionate support and professional guidance for your emotional well-being journey.
+          <div className="md:col-span-1">
+            <Link to="/" className="flex items-center gap-2 mb-6 group">
+              <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center group-hover:bg-emerald-100 transition-all duration-300">
+                <FaLeaf className="text-emerald-600 text-xl" />
+              </div>
+              <span className="text-2xl font-display font-bold text-neutral-900 tracking-tight">
+                Synapse
+              </span>
+            </Link>
+            <p className="text-neutral-500 leading-relaxed mb-6 text-sm">
+              Empowering your mental wellness journey with professional care and compassion.
+              We are here to listen, support, and guide you.
             </p>
             <div className="flex space-x-4">
-              <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors duration-300 cursor-pointer">
-                <span className="text-sm font-semibold">F</span>
-              </div>
-              <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors duration-300 cursor-pointer">
-                <span className="text-sm font-semibold">T</span>
-              </div>
-              <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors duration-300 cursor-pointer">
-                <span className="text-sm font-semibold">I</span>
-              </div>
-              <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors duration-300 cursor-pointer">
-                <span className="text-sm font-semibold">L</span>
-              </div>
+              {[FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn].map((Icon, index) => (
+                <a
+                  key={index}
+                  href="#"
+                  className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-500 hover:bg-emerald-600 hover:text-white transition-all duration-300"
+                >
+                  <Icon size={14} />
+                </a>
+              ))}
             </div>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
-            <ul className="space-y-3">
+            <h4 className="text-neutral-900 font-bold mb-6">Discovery</h4>
+            <ul className="space-y-3 text-sm">
+              {['Home', 'About Us', 'Our Therapists', 'Wellness Blog'].map((item) => (
+                <li key={item}>
+                  <Link
+                    to={item === 'Home' ? '/' : `/${item.toLowerCase().replace(' ', '-')}`}
+                    className="hover:text-emerald-600 transition-colors duration-200"
+                  >
+                    {item}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Tools */}
+          <div>
+            <h4 className="text-neutral-900 font-bold mb-6">Self-Care</h4>
+            <ul className="space-y-3 text-sm">
               <li>
-                <a href="/" className="text-neutral-200 hover:text-white transition-colors duration-200">
-                  Home
-                </a>
+                <Link to="/feedback" className="hover:text-emerald-600 transition-colors duration-200">
+                  Mood Tracker
+                </Link>
               </li>
               <li>
-                <a href="/about" className="text-neutral-200 hover:text-white transition-colors duration-200">
-                  About Us
-                </a>
+                <Link to="/resources" className="hover:text-emerald-600 transition-colors duration-200">
+                  Resource Library
+                </Link>
               </li>
               <li>
-                <a href="/blog" className="text-neutral-200 hover:text-white transition-colors duration-200">
-                  Wellness Blog
-                </a>
+                <Link to="/meditation" className="hover:text-emerald-600 transition-colors duration-200">
+                  Guided Meditation
+                </Link>
               </li>
               <li>
-                <a href="/feedBack" className="text-neutral-200 hover:text-white transition-colors duration-200">
-                  Self-Care Tools
-                </a>
+                <Link to="/assessment" className="hover:text-emerald-600 transition-colors duration-200">
+                  Self Assessment
+                </Link>
               </li>
             </ul>
           </div>
 
           {/* Support */}
           <div>
-            <h4 className="text-lg font-semibold mb-4">Support</h4>
-            <ul className="space-y-3">
+            <h4 className="text-neutral-900 font-bold mb-6">Support</h4>
+            <ul className="space-y-3 text-sm">
               <li>
-                <a href="/sos" className="text-neutral-200 hover:text-white transition-colors duration-200">
-                  Emergency Support
-                </a>
+                <Link to="/contact" className="hover:text-emerald-600 transition-colors duration-200">
+                  Contact Support
+                </Link>
               </li>
               <li>
-                <a href="/contact" className="text-neutral-200 hover:text-white transition-colors duration-200">
-                  Contact Us
-                </a>
+                <Link to="/emergency" className="text-amber-600 hover:text-amber-700 font-medium transition-colors duration-200 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                  Emergency Help
+                </Link>
               </li>
               <li>
-                <a href="/help" className="text-neutral-200 hover:text-white transition-colors duration-200">
-                  Help Center
-                </a>
-              </li>
-              <li>
-                <a href="/privacy" className="text-neutral-200 hover:text-white transition-colors duration-200">
+                <Link to="/privacy" className="hover:text-emerald-600 transition-colors duration-200">
                   Privacy Policy
-                </a>
+                </Link>
+              </li>
+              <li>
+                <Link to="/terms" className="hover:text-emerald-600 transition-colors duration-200">
+                  Terms of Service
+                </Link>
               </li>
             </ul>
           </div>
         </div>
 
         {/* Bottom Section */}
-        <div className="border-t border-white/20 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <div className="text-neutral-300 text-sm mb-4 md:mb-0">
-            © 2026 Synapse. All rights reserved. Your mental wellness matters.
+        <div className="border-t border-neutral-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-neutral-400">
+          <div>
+            © 2026 Synapse Mental Wellness. All rights reserved.
           </div>
-          <div className="flex items-center space-x-6 text-sm">
-            <span className="text-neutral-300">24/7 Crisis Support Available</span>
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-success-400 rounded-full animate-pulse"></div>
-              <span className="text-success-400 font-medium">Online</span>
-            </div>
+          <div className="flex items-center gap-6">
+            <span>Made with 💚 for better minds.</span>
           </div>
         </div>
       </div>

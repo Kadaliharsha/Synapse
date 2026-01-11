@@ -27,7 +27,7 @@ const ImgCarousel = ({ images }) => {
   };
 
   return (
-    <div className="relative w-full h-[600px] lg:h-[700px] overflow-hidden rounded-[2.5rem] shadow-2xl mx-auto shadow-emerald-900/20 bg-emerald-50">
+    <div className="relative w-full max-w-2xl h-[400px] lg:h-[500px] overflow-hidden rounded-[2.5rem] shadow-2xl mx-auto shadow-emerald-900/20 bg-emerald-50">
       {/* Carousel Images */}
       {images.map((image, index) => (
         <div
@@ -65,8 +65,8 @@ const ImgCarousel = ({ images }) => {
             key={index}
             onClick={() => goToSlide(index)}
             className={`w-3 h-3 rounded-full transition-all duration-300 ${index === currentIndex
-                ? 'bg-emerald-600 scale-125'
-                : 'bg-emerald-200/50 hover:bg-emerald-400'
+              ? 'bg-emerald-600 scale-125'
+              : 'bg-emerald-200/50 hover:bg-emerald-400'
               }`}
           />
         ))}

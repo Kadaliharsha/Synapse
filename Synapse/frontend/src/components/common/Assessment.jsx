@@ -1,68 +1,71 @@
 import React from "react";
-import { useNavigate } from "react-router-dom"; // Importing useNavigate
-import mood from "../../assets/mood.png";
+import { useNavigate } from "react-router-dom";
+import GlassCard from "./GlassCard";
+import { FaSmile, FaShieldAlt, FaBrain, FaUserMd, FaCalendarCheck } from "react-icons/fa";
 
-const Assement = () => {
-  const navigate = useNavigate(); // Initializing useNavigate
+const Assessment = () => {
+  const navigate = useNavigate();
 
-  // Handle the button click to navigate to the feedback page
   const handleButtonClick = () => {
-    navigate("/feedBack"); // Redirects to the feedback page
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Please login to track your mood.");
+      navigate("/login?redirect=/feedBack");
+      return;
+    }
+    navigate("/feedBack");
   };
 
   return (
-    <div className="card card-hover overflow-hidden group">
+    <GlassCard className="h-full !p-0 overflow-hidden group hover:ring-2 hover:ring-emerald-500/30 transition-all duration-500">
       <div className="flex flex-col lg:flex-row h-full">
-        {/* Image Section */}
-        <div className="lg:w-1/2 relative overflow-hidden">
-          <img
-            src={mood}
-            alt="Mood assessment illustration"
-            className="w-full h-64 lg:h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-primary-600/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        {/* Content Section */}
+        <div className="lg:w-1/2 p-8 lg:p-10 flex flex-col relative z-10">
+          <div className="absolute top-0 left-0 w-32 h-32 bg-emerald-400/10 rounded-full blur-3xl -z-10"></div>
+
+          <h2 className="text-3xl font-display font-bold text-gray-800 mb-4 leading-tight">
+            How are you feeling <span className="text-emerald-600">today?</span>
+          </h2>
+
+          <p className="text-gray-600 mb-8 leading-relaxed">
+            Your emotional well-being matters. Check in with yourself and track your journey.
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-4 mt-auto">
+            <button
+              onClick={handleButtonClick}
+              className="px-8 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-semibold shadow-lg shadow-emerald-200 transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2 group/btn"
+            >
+              <FaSmile className="text-lg group-hover/btn:rotate-12 transition-transform" />
+              <span>Share Mood</span>
+            </button>
+          </div>
+
+
         </div>
 
-        {/* Content Section */}
-        <div className="lg:w-1/2 p-8 bg-gradient-to-br from-primary-500 to-secondary-600 text-white flex flex-col justify-center">
-          <div className="text-center lg:text-left">
-            <h2 className="text-3xl lg:text-4xl font-display font-bold mb-6 leading-tight">
-              How are you feeling today?
-            </h2>
+        {/* Visual/Icon Section */}
+        <div className="lg:w-1/2 relative min-h-[250px] lg:min-h-full bg-gradient-to-br from-emerald-50 to-teal-50 overflow-hidden flex flex-col justify-center items-center p-8">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-emerald-200/40 via-transparent to-transparent"></div>
 
-            <p className="text-lg lg:text-xl mb-8 leading-relaxed opacity-90">
-              Your emotional well-being matters. Take a moment to check in with yourself
-              and let us provide the right support for your mental health journey.
-            </p>
+          <div className="w-24 h-24 bg-white rounded-2xl shadow-xl shadow-emerald-100 flex items-center justify-center mb-6 relative z-10 transform group-hover:-rotate-6 transition-transform duration-500">
+            <FaBrain className="text-5xl text-emerald-500" />
+          </div>
 
-            <div className="flex flex-col sm:flex-row gap-4">
-              <button
-                type="button"
-                className="btn-accent group-hover:shadow-glow transition-all duration-300"
-                onClick={handleButtonClick}
-              >
-                <span className="flex items-center space-x-2">
-                  <span>💭</span>
-                  <span>Share Your Mood</span>
-                </span>
-              </button>
-
-              <div className="flex items-center justify-center space-x-4 text-sm opacity-80">
-                <div className="flex items-center space-x-1">
-                  <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                  <span>Confidential</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                  <span>Quick & Easy</span>
-                </div>
-              </div>
+          <div className="space-y-4 text-center relative z-10">
+            <div className="bg-white/60 backdrop-blur-md px-4 py-2 rounded-lg shadow-sm flex items-center gap-3 w-fit mx-auto">
+              <FaUserMd className="text-teal-500" />
+              <span className="text-sm font-medium text-gray-600">Quick Check-in</span>
+            </div>
+            <div className="bg-white/60 backdrop-blur-md px-4 py-2 rounded-lg shadow-sm flex items-center gap-3 w-fit mx-auto">
+              <FaCalendarCheck className="text-teal-500" />
+              <span className="text-sm font-medium text-gray-600">Private</span>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </GlassCard>
   );
 };
 
-export default Assement;
+export default Assessment;

@@ -90,12 +90,12 @@ const Home = () => {
       <main className="flex-grow pt-24">
         {/* Hero Headline - Moved outside Carousel */}
         {!isLoggedIn && (
-          <div className="text-center max-w-5xl mx-auto px-4 mb-8 animate-fade-in-up">
-            <h1 className="text-4xl md:text-6xl font-display font-bold text-gray-900 mb-6 leading-tight">
-              Your Mental Wellness Journey <span className="text-emerald-600 block sm:inline">Starts Here</span>
+          <div className="text-center max-w-4xl mx-auto px-4 mb-4 animate-fade-in-up">
+            <h1 className="text-xl md:text-3xl font-display font-bold text-gray-900 mb-3 leading-tight">
+              Your Holistic Ecosystem for <span className="text-emerald-600 block sm:inline">Mental Wellness</span>
             </h1>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto font-medium">
-              Connect with compassionate professionals who understand and support your emotional well-being.
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto font-medium leading-relaxed">
+              Combine professional therapy with intelligent mood tracking and curated self-care resources.
             </p>
           </div>
         )}
@@ -112,10 +112,10 @@ const Home = () => {
             {/* Welcome Message */}
             {isLoggedIn && (
               <div className="text-center max-w-3xl mx-auto animate-fade-in-up">
-                <h1 className="text-4xl md:text-5xl font-display font-bold mb-4 text-gray-900">
+                <h1 className="text-lg md:text-2xl font-display font-bold mb-4 text-gray-900">
                   Welcome back, <span className="text-emerald-600">{user.split(' ')[0]}</span>
                 </h1>
-                <p className="text-xl text-gray-500">
+                <p className="text-lg text-gray-500">
                   How are you feeling today? Take a moment to check in with yourself.
                 </p>
               </div>

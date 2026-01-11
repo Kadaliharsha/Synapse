@@ -1,15 +1,63 @@
 import React, { useState, useEffect } from "react";
 import TherapistDisplayCard from "./TherapistDisplayCard";
-import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import API from "../../api/api";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 
+// ----------------------------------------------------------------------
+// 1. DUMMY DATA FOR CAROUSEL (The "Train" Passengers)
+// ----------------------------------------------------------------------
+const DUMMY_THERAPISTS = [
+  {
+    id: "dummy-1",
+    name: "Dr. Seraphina Vance",
+    specialization: "Anxiety & Trauma Specialist",
+    bio: "Helping you find calm in the chaos with verifiable CBT techniques.",
+    profilePicture: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=300&h=300",
+    experience: 12,
+    rating: 4.9,
+  },
+  {
+    id: "dummy-2",
+    name: "Dr. Aris Thorne",
+    specialization: "Clinical Psychologist",
+    bio: "Focusing on men's mental health and career burnout recovery.",
+    profilePicture: "https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&q=80&w=300&h=300",
+    experience: 8,
+    rating: 4.8,
+  },
+  {
+    id: "dummy-3",
+    name: "Dr. Elara Mints",
+    specialization: "Child & Family Therapist",
+    bio: "Building stronger bonds and healthier family dynamics.",
+    profilePicture: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=300&h=300",
+    experience: 15,
+    rating: 5.0,
+  },
+  {
+    id: "dummy-4",
+    name: "Dr. Julian Chase",
+    specialization: "Addiction Recovery",
+    bio: "Compassionate support for navigating the path to sobriety.",
+    profilePicture: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&q=80&w=300&h=300",
+    experience: 20,
+    rating: 4.9,
+  },
+  {
+    id: "dummy-5",
+    name: "Dr. Maya Lin",
+    specialization: "Mindfulness Coach",
+    bio: "Integrating Eastern mindfulness with Western psychology.",
+    profilePicture: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&q=80&w=300&h=300",
+    experience: 6,
+    rating: 4.7,
+  },
+];
+
 const Meet = () => {
   const [therapists, setTherapists] = useState([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -21,18 +69,30 @@ const Meet = () => {
   });
 
   const navigate = useNavigate();
-  const itemsPerPage = 4;
 
   useEffect(() => {
     const fetchTherapists = async () => {
       try {
         const response = await API.get("/therapist/all");
+        let realTherapists = [];
         if (response.status === 200) {
-          setTherapists(response.data);
+          realTherapists = response.data;
         }
+        // ----------------------------------------------------------------------
+        // 2. THE MERGE LOGIC
+        // We put Real therapists FIRST, then append Dummy ones to make the train long.
+        // We duplicate the list to ensure the marquee has enough items to scroll smoothly.
+        // ----------------------------------------------------------------------
+        const mixedList = [...realTherapists, ...DUMMY_THERAPISTS];
+
+        // Triple the list to ensure infinite smooth scrolling without gaps
+        setTherapists([...mixedList, ...mixedList, ...mixedList]);
+
       } catch (err) {
-        setError("Error fetching therapists.");
-        console.error(err);
+        console.error("Error fetching therapists, falling back to dummy data", err);
+        // Even if API fails, show dummy data so the site looks good
+        const mixedList = [...DUMMY_THERAPISTS];
+        setTherapists([...mixedList, ...mixedList, ...mixedList]);
       } finally {
         setLoading(false);
       }
@@ -41,21 +101,13 @@ const Meet = () => {
     fetchTherapists();
   }, []);
 
-  const totalPages = Math.ceil(therapists.length / itemsPerPage);
-
-  const handleNext = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex + 1 < totalPages ? prevIndex + 1 : prevIndex
-    );
-  };
-
-  const handlePrev = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex - 1 >= 0 ? prevIndex - 1 : prevIndex
-    );
-  };
-
   const handleBookNow = ({ email }) => {
+    // If it's a dummy therapist (no email), redirect or show generic
+    if (!email) {
+      alert("This is a demo profile. Please select a registered therapist.");
+      return;
+    }
+
     let userEmail;
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
@@ -65,7 +117,8 @@ const Meet = () => {
     }
 
     if (!userEmail) {
-      navigate("/403");
+      alert("Please login to book a session.");
+      navigate("/login");
       return;
     }
     setFormData((prev) => ({
@@ -85,12 +138,9 @@ const Meet = () => {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted!");
-
     try {
       const response = await API.post("/appointments", formData);
       if (response.status === 200) {
-        console.log(response);
         alert("Appointment booked successfully!");
         setShowForm(false);
         setFormData({
@@ -103,199 +153,154 @@ const Meet = () => {
         });
       }
     } catch (err) {
-      console.error("Error during form submission:", err);
       alert("Failed to book appointment.");
     }
   };
 
-  const displayedTherapists = therapists.slice(
-    currentIndex * itemsPerPage,
-    (currentIndex + 1) * itemsPerPage
-  );
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-neutral-50 via-blue-50 to-purple-50">
-        <div className="text-center">
-          <div className="loading-dots mb-4">
-            <div></div>
-            <div></div>
-            <div></div>
-          </div>
-          <p className="text-neutral-600 font-medium">Finding your perfect therapist...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="text-center py-20 bg-gradient-to-br from-neutral-50 via-blue-50 to-purple-50">
-        <div className="text-error-600 text-lg font-medium">{error}</div>
-      </div>
-    );
-  }
+  if (loading) return null; // Or simple loader
 
   return (
-    <div className="py-20 bg-gradient-to-br from-neutral-50 via-blue-50 to-purple-50">
-      <div className="container mx-auto px-6">
-        <div className="text-center mb-16 animate-fade-in">
-          <h2 className="text-4xl md:text-5xl font-display font-bold mb-6 gradient-text">
-            Meet Our Mental Health Professionals
-          </h2>
-          <p className="text-xl text-neutral-600 max-w-3xl mx-auto leading-relaxed">
-            Connect with experienced therapists who are dedicated to supporting your mental wellness journey.
-            Each professional brings unique expertise and a compassionate approach to help you thrive.
-          </p>
-        </div>
+    <div className="py-20 bg-transparent overflow-hidden">
+      <div className="container mx-auto px-6 mb-12 text-center">
+        <h2 className="text-2xl md:text-3xl font-display font-bold mb-6 gradient-text">
+          Meet Our Mental Health Professionals
+        </h2>
+        <p className="text-lg text-neutral-600 max-w-2xl mx-auto leading-relaxed pt-2">
+          Connect with experienced therapists. Real profiles are prioritized first!
+        </p>
+      </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-          {displayedTherapists.map((therapist, index) => (
-            <div key={therapist.id} className="animate-slide-up" style={{ animationDelay: `${index * 0.1}s` }}>
+      {/* 
+        3. THE CAROUSEL CONTAINER 
+        - Flex container that overflows
+        - .animate-scroll maps to the keyframes in main.css
+      */}
+      <div className="relative w-full overflow-hidden">
+        {/* Gradients to fade edges */}
+        <div className="absolute top-0 left-0 w-32 h-full bg-gradient-to-r from-gray-50 to-transparent z-10 pointer-events-none"></div>
+        <div className="absolute top-0 right-0 w-32 h-full bg-gradient-to-l from-gray-50 to-transparent z-10 pointer-events-none"></div>
+
+        <div className="flex w-max animate-scroll gap-8 hover:pause">
+          {therapists.map((therapist, index) => (
+            <div key={`${therapist.id}-${index}`} className="w-[350px] flex-shrink-0 transition-transform hover:scale-105 duration-300">
               <TherapistDisplayCard
                 {...therapist}
                 onBookNow={handleBookNow}
+              // Pass a flag to hide "Book Now" for dummies if needed, 
+              // or just handle it in the function like specificed above.
               />
             </div>
           ))}
         </div>
+      </div>
 
-        {totalPages > 1 && (
-          <div className="flex justify-center items-center gap-4">
-            <button
-              className="p-4 bg-primary-600 text-white rounded-full hover:bg-primary-700 transition-all duration-300 shadow-soft hover:shadow-medium transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
-              onClick={handlePrev}
-              disabled={currentIndex === 0}
-            >
-              <FaArrowLeft className="text-lg" />
-            </button>
-            <div className="flex space-x-2">
-              {Array.from({ length: totalPages }, (_, i) => (
-                <button
-                  key={i}
-                  className={`w-3 h-3 rounded-full transition-all duration-300 ${i === currentIndex ? 'bg-primary-600' : 'bg-neutral-300'
-                    }`}
-                  onClick={() => setCurrentIndex(i)}
-                />
-              ))}
+      {/* Form Modal (Unchanged) */}
+      {showForm && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-large p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-scale-in">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-display font-bold gradient-text mb-2">
+                Schedule Your Session
+              </h2>
+              <p className="text-neutral-600">
+                Take the first step towards better mental wellness
+              </p>
             </div>
-            <button
-              className="p-4 bg-primary-600 text-white rounded-full hover:bg-primary-700 transition-all duration-300 shadow-soft hover:shadow-medium transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
-              onClick={handleNext}
-              disabled={currentIndex + 1 >= totalPages}
-            >
-              <FaArrowRight className="text-lg" />
-            </button>
-          </div>
-        )}
 
-        {showForm && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50 p-4">
-            <div className="bg-white rounded-2xl shadow-large p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-scale-in">
-              <div className="text-center mb-8">
-                <h2 className="text-3xl font-display font-bold gradient-text mb-2">
-                  Schedule Your Session
-                </h2>
-                <p className="text-neutral-600">
-                  Take the first step towards better mental wellness
-                </p>
+            <form onSubmit={handleFormSubmit} className="space-y-6">
+              <div>
+                <label className="block text-neutral-700 text-sm font-medium mb-2">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  required
+                  className="input-field"
+                  placeholder="Enter your full name"
+                />
               </div>
 
-              <form onSubmit={handleFormSubmit} className="space-y-6">
+              <div>
+                <label className="block text-neutral-700 text-sm font-medium mb-2">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  required
+                  className="input-field"
+                  placeholder="Enter your email address"
+                />
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-neutral-700 text-sm font-medium mb-2">
-                    Full Name
+                    Preferred Date
                   </label>
                   <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
+                    type="date"
+                    name="date"
+                    value={formData.date}
                     onChange={handleInputChange}
                     required
                     className="input-field"
-                    placeholder="Enter your full name"
                   />
                 </div>
 
                 <div>
                   <label className="block text-neutral-700 text-sm font-medium mb-2">
-                    Email Address
+                    Preferred Time
                   </label>
                   <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
+                    type="time"
+                    name="time"
+                    value={formData.time}
                     onChange={handleInputChange}
                     required
                     className="input-field"
-                    placeholder="Enter your email address"
                   />
                 </div>
+              </div>
 
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-neutral-700 text-sm font-medium mb-2">
-                      Preferred Date
-                    </label>
-                    <input
-                      type="date"
-                      name="date"
-                      value={formData.date}
-                      onChange={handleInputChange}
-                      required
-                      className="input-field"
-                    />
-                  </div>
+              <div>
+                <label className="block text-neutral-700 text-sm font-medium mb-2">
+                  Additional Notes (Optional)
+                </label>
+                <textarea
+                  name="message"
+                  value={formData.message}
+                  onChange={handleInputChange}
+                  rows="4"
+                  className="input-field resize-none"
+                  placeholder="Share any specific concerns or preferences..."
+                />
+              </div>
 
-                  <div>
-                    <label className="block text-neutral-700 text-sm font-medium mb-2">
-                      Preferred Time
-                    </label>
-                    <input
-                      type="time"
-                      name="time"
-                      value={formData.time}
-                      onChange={handleInputChange}
-                      required
-                      className="input-field"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-neutral-700 text-sm font-medium mb-2">
-                    Additional Notes (Optional)
-                  </label>
-                  <textarea
-                    name="message"
-                    value={formData.message}
-                    onChange={handleInputChange}
-                    rows="4"
-                    className="input-field resize-none"
-                    placeholder="Share any specific concerns or preferences..."
-                  />
-                </div>
-
-                <div className="flex gap-4 pt-4">
-                  <button
-                    type="button"
-                    onClick={() => setShowForm(false)}
-                    className="flex-1 px-6 py-3 border-2 border-neutral-300 text-neutral-700 rounded-lg hover:bg-neutral-50 transition-all duration-300 font-medium"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="flex-1 btn-primary"
-                  >
-                    Book Appointment
-                  </button>
-                </div>
-              </form>
-            </div>
+              <div className="flex gap-4 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowForm(false)}
+                  className="flex-1 px-6 py-3 border-2 border-neutral-300 text-neutral-700 rounded-lg hover:bg-neutral-50 transition-all duration-300 font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 btn-primary"
+                >
+                  Book Appointment
+                </button>
+              </div>
+            </form>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

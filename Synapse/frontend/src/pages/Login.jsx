@@ -29,6 +29,15 @@ const Login = () => {
         localStorage.setItem("token", token);
         localStorage.setItem("user", JSON.stringify({ name, roles, email: loginCredentials.email }));
 
+        // Check for redirect param
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirectPath = urlParams.get('redirect');
+
+        if (redirectPath) {
+          window.location.href = redirectPath;
+          return;
+        }
+
         if (roles[0] === "USER") {
           window.location.href = "/userDb";
         } else if (roles[0] === "THERAPIST") {

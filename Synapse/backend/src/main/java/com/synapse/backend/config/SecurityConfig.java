@@ -30,11 +30,12 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/error").permitAll()
+                        .requestMatchers("/auth/**", "/error", "/therapist/all").permitAll() // Allow public access to
+                                                                                             // therapist list
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/user/**").hasAnyAuthority("USER", "ADMIN")
-                        .requestMatchers("/therapist/all", "/therapist/*/name")
-                        .hasAnyAuthority("USER", "THERAPIST", "ADMIN") // Allow users to see therapist list
+                        .requestMatchers("/therapist/*/name")
+                        .hasAnyAuthority("USER", "THERAPIST", "ADMIN")
                         .requestMatchers("/therapist/**").hasAnyAuthority("THERAPIST", "ADMIN")
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(
@@ -59,7 +60,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList("*")); // Allow all origins for Vercel deployment
+        config.setAllowedOriginPatterns(Arrays.asList("*")); // Use patterns allows wildcard with credentials
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(Arrays.asList("*"));
         config.setAllowCredentials(true); // Allow cookies/auth tokens
