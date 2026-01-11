@@ -71,9 +71,7 @@ const Navbar = ({ isLoggedIn, userName, avatar, role }) => {
           <div className="hidden md:flex items-center space-x-8">
             <NavLink to="/">Home</NavLink>
 
-            {isLoggedIn && (
-              <NavLink to={role === "USER" ? "/userDb" : "/therapistDb"}>Dashboard</NavLink>
-            )}
+            {/* Dashboard Link Removed (Access via Profile Dropdown) */}
 
             {role !== "THERAPIST" && (
               <>
