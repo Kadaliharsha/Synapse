@@ -100,10 +100,12 @@ const Home = () => {
           </div>
         )}
 
-        {/* Hero Section */}
-        <div className="relative mb-16 px-4 sm:px-6 lg:px-8">
-          <ImgCarousel images={heroImages} />
-        </div>
+        {/* Carousel Section - Only for Guests */}
+        {!isLoggedIn && (
+          <div className="relative mb-16 px-4 sm:px-6 lg:px-8">
+            <ImgCarousel images={heroImages} />
+          </div>
+        )}
 
         {/* User Content */}
         {role !== "THERAPIST" && (
@@ -137,6 +139,7 @@ const Home = () => {
             </div>
           </div>
         )}
+
 
         {/* Therapist Content */}
         {role === "THERAPIST" && (
