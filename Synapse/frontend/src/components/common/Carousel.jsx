@@ -16,7 +16,8 @@ export default function Carsoule() {
   const images = [home1, home2, home3, home4];
 
   useEffect(() => {
-    const email = Cookies.get("email"); // Checking login status through cookies (or use sessionStorage if preferred)
+    const userStr = localStorage.getItem("user");
+    const email = userStr ? JSON.parse(userStr).email : null; // Checking login status through localStorage
 
     if (email) {
       setIsLoggedIn(true);

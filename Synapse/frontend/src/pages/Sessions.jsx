@@ -12,27 +12,51 @@ const Sessions = () => {
   const [role, setRole] = useState(""); // User role
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Login state
   const [loading, setLoading] = useState(true);
-  const userRole = Cookies.get("role"); // Loading state to handle async calls
-  const userEmail = Cookies.get("email");
-  const navigate = useNavigate();
-
   useEffect(() => {
-    if (!userEmail || userRole === "USER") {
+    const userStr = localStorage.getItem("user");
+    let storedEmail = null;
+    let storedRole = null;
+
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        storedEmail = user.email;
+        storedRole = user.roles && user.roles[0];
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    if (!storedEmail || storedRole === "USER") {
       navigate("/403");
     }
-  }, [userEmail, navigate]);
+  }, [navigate]);
 
   useEffect(() => {
-    if (userEmail && userRole) {
-      setRole(userRole);
+    const userStr = localStorage.getItem("user");
+    let storedEmail = null;
+    let storedRole = null;
+
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        storedEmail = user.email;
+        storedRole = user.roles && user.roles[0];
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    if (storedEmail && storedRole) {
+      setRole(storedRole);
       setIsLoggedIn(true);
 
       const fetchUserDetails = async () => {
         try {
           const response =
-            userRole === "USER"
-              ? await API.get(`/user/${userEmail}`)
-              : await API.get(`/therapist/${userEmail}`);
+            storedRole === "USER"
+              ? await API.get(`/user/${storedEmail}`)
+              : await API.get(`/therapist/${storedEmail}`);
 
           if (response.status === 200) {
             setUser(response.data.name); // Set the user name

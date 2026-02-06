@@ -36,12 +36,19 @@ public class TherapistController {
         if (therapistOpt.isPresent()) {
             Therapist therapist = therapistOpt.get();
 
-
             return ResponseEntity.ok(therapist);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
     }
+
+    @GetMapping("/id/{id}")
+    public ResponseEntity<Therapist> getTherapistById(@PathVariable String id) {
+        return therapistRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     @GetMapping("/{email}/name")
     public ResponseEntity<String> getTherapistNameByEmail(@PathVariable String email) {
         // Fetch therapist details by email
@@ -56,12 +63,27 @@ public class TherapistController {
         }
     }
 
-
     @GetMapping("/all")
-    public ResponseEntity<List<Therapist>> getAllTherapists() {
+    public ResponseEntity<List<Therapist>> getAllTherapists(
+            @RequestParam(required = false) String specialization,
+            @RequestParam(required = false) String gender,
+            @RequestParam(required = false) Double maxPrice,
+            @RequestParam(required = false) Double minRating) {
         List<Therapist> therapists = therapistRepository.findAll();
-        return ResponseEntity.ok(therapists);
+
+        // In-memory filtering (simple for MVP)
+        // For production, use Repository queries or Criteria API
+        List<Therapist> filtered = therapists.stream()
+                .filter(t -> specialization == null || (t.getSpecialization() != null
+                        && t.getSpecialization().toLowerCase().contains(specialization.toLowerCase())))
+                .filter(t -> gender == null || (t.getGender() != null && t.getGender().equalsIgnoreCase(gender)))
+                .filter(t -> maxPrice == null || (t.getPrice() != null && t.getPrice() <= maxPrice))
+                .filter(t -> minRating == null || (t.getRating() != null && t.getRating() >= minRating))
+                .toList();
+
+        return ResponseEntity.ok(filtered);
     }
+
     @PutMapping("/{email}")
     public ResponseEntity<Therapist> updateTherapist(
             @PathVariable String email,
@@ -72,23 +94,24 @@ public class TherapistController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Therapist not found"));
 
         // Update fields if they are not null or invalid
-        if (updatedTherapist.getName() != null) {
+        if (updatedTherapist.getName() != null)
             existingTherapist.setName(updatedTherapist.getName());
-        }
-
-
-
-        if (updatedTherapist.getProfilePicture() != null) {
+        if (updatedTherapist.getProfilePicture() != null)
             existingTherapist.setProfilePicture(updatedTherapist.getProfilePicture());
-        }
-
-        if (updatedTherapist.getSpecialization() != null) {
+        if (updatedTherapist.getSpecialization() != null)
             existingTherapist.setSpecialization(updatedTherapist.getSpecialization());
-        }
-
-        if (updatedTherapist.getLicenceNo() != null) {
+        if (updatedTherapist.getLicenceNo() != null)
             existingTherapist.setLicenceNo(updatedTherapist.getLicenceNo());
-        }
+
+        // New Fields
+        if (updatedTherapist.getBio() != null)
+            existingTherapist.setBio(updatedTherapist.getBio());
+        if (updatedTherapist.getPrice() != null)
+            existingTherapist.setPrice(updatedTherapist.getPrice());
+        if (updatedTherapist.getGender() != null)
+            existingTherapist.setGender(updatedTherapist.getGender());
+        if (updatedTherapist.getExperience() != null)
+            existingTherapist.setExperience(updatedTherapist.getExperience());
 
         // Save the updated therapist to the database
         Therapist savedTherapist = therapistRepository.save(existingTherapist);
@@ -96,9 +119,19 @@ public class TherapistController {
         return ResponseEntity.ok(savedTherapist);
     }
 
+    @GetMapping("/{email}/patients")
+    public ResponseEntity<List<com.synapse.backend.dto.PatientSummaryDTO>> getPatients(@PathVariable String email) {
+        List<com.synapse.backend.dto.PatientSummaryDTO> patients = appointmentService.getPatientsForTherapist(email);
+        return ResponseEntity.ok(patients);
+    }
 
-
-
-
-
+    @GetMapping("/{email}/patient/{patientEmail}")
+    public ResponseEntity<com.synapse.backend.dto.PatientDetailDTO> getPatientDetail(@PathVariable String email,
+            @PathVariable String patientEmail) {
+        com.synapse.backend.dto.PatientDetailDTO detail = appointmentService.getPatientDetails(email, patientEmail);
+        if (detail == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(detail);
+    }
 }

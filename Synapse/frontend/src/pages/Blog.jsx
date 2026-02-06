@@ -15,8 +15,19 @@ const Blog = () => {
 
   // Fetch user details
   useEffect(() => {
-    const userEmail = Cookies.get("email");
-    const userRole = Cookies.get("role");
+    const userStr = localStorage.getItem("user");
+    let userEmail = null;
+    let userRole = null;
+
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        userEmail = user.email;
+        userRole = user.roles && user.roles[0];
+      } catch (e) {
+        console.error(e);
+      }
+    }
 
     if (userEmail && userRole) {
       setRole(userRole);

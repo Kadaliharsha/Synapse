@@ -12,9 +12,11 @@ import { useNavigate } from "react-router-dom";
 const SOSButton = () => {
   const [open, setOpen] = useState(false);
   const [isSendingSOS, setIsSendingSOS] = useState(false);
-  const email = Cookies.get("email");
-  const role = Cookies.get("role");
-  const userName = Cookies.get("userName");
+  const userStr = localStorage.getItem("user");
+  const user = userStr ? JSON.parse(userStr) : {};
+  const email = user.email;
+  const role = user.roles ? user.roles[0] : null; // simplified role extraction
+  const userName = user.name || user.username; // fallback
   const navigate = useNavigate();
 
   const handleClickOpen = () => {

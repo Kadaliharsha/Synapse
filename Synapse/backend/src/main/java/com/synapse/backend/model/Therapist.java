@@ -21,33 +21,12 @@ public class Therapist {
     private String password;
     private String profilePicture;
     private List<String> roles;
-
-    // Add missing getters
-    public String getName() {
-        return name;
-    }
-
-    public String getProfilePicture() {
-        return profilePicture;
-    }
-
-    public String getSpecialization() {
-        return specialization;
-    }
-
-    public String getLicenceNo() {
-        return licenceNo;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public List<String> getRoles() {
-        return roles;
-    }
+    
+    // New Profile Fields
+    private String bio;
+    private Double price;
+    private String gender;
+    private Integer experience; // Years of experience
+    private Double rating;
+    private Integer reviewCount;
 }

@@ -13,6 +13,10 @@ import Appoinment from "./pages/Appoinment";
 import Sessions from "./pages/Sessions";
 import About from "./pages/About";
 import Meet from "./components/therapist/Meet";
+import TherapistDirectory from "./pages/TherapistDirectory";
+import TherapistProfile from "./pages/TherapistProfile";
+import MyPatients from "./pages/MyPatients";
+import PatientProfile from "./pages/PatientProfile";
 
 function App() {
   return (
@@ -25,13 +29,18 @@ function App() {
         <Route path="/userDb" element={<UserDB />} />
         <Route path="/about" element={<About />} />
         <Route path="/therapistDb" element={<TherapistDB />} />
-        <Route path="/therapist" element={<Meet />} />
+        <Route path="/therapistDb" element={<TherapistDB />} />
+        {/* <Route path="/therapist" element={<Meet />} /> Replaced by Directory */}
+        <Route path="/therapists" element={<TherapistDirectory />} />
+        <Route path="/therapist/:id" element={<TherapistProfile />} />
         <Route path="/sos" element={<SOS />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/feedBack" element={<FeedBack />} />
         <Route path="/403" element={<Forbidden />} />
         <Route path="/appointments" element={<Appoinment />} />
         <Route path="/sessions" element={<Sessions />} />
+        <Route path="/patients" element={<MyPatients />} />
+        <Route path="/patients/:email" element={<PatientProfile />} />
       </Routes>
     </Router>
   );

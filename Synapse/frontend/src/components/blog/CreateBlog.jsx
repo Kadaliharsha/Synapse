@@ -12,8 +12,10 @@ const CreateBlog = ({ blogs, addBlog }) => {
   });
 
   const navigate = useNavigate(); // Initialize the navigate function
-  const email = Cookies.get("email");
-  const role = Cookies.get("role");
+  const userStr = localStorage.getItem("user");
+  const user = userStr ? JSON.parse(userStr) : {};
+  const email = user.email;
+  const role = user.roles ? user.roles[0] : null;
 
   // Redirect to /403 if the email is not in the cookies and the form is shown
   const handleCreateBlogClick = () => {

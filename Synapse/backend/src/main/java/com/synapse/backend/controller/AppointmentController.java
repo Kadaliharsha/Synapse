@@ -17,6 +17,9 @@ public class AppointmentController {
     @Autowired
     private AppointmentService appointmentService;
 
+    @Autowired
+    private com.synapse.backend.repository.SlotRepository slotRepository;
+
     @GetMapping("/user/{email}")
     public List<Appointment> getAppointmentsByUserEmail(@PathVariable String email) {
         return appointmentService.getAppointmentsByUserEmail(email);
@@ -29,6 +32,18 @@ public class AppointmentController {
 
     @PostMapping
     public ResponseEntity<String> createAppointment(@RequestBody AppointmentRequest request) {
+        // If slotId is provided, mark it as booked
+        if (request.getSlotId() != null && !request.getSlotId().isEmpty()) {
+            com.synapse.backend.model.Slot slot = slotRepository.findById(request.getSlotId())
+                    .orElseThrow(() -> new RuntimeException("Slot not found"));
+
+            if (slot.isBooked()) {
+                return ResponseEntity.badRequest().body("Slot is already booked.");
+            }
+            slot.setBooked(true);
+            slotRepository.save(slot);
+        }
+
         appointmentService.saveAppointment(request);
         return ResponseEntity.ok("Appointment booked successfully!");
     }

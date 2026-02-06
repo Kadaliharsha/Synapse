@@ -4,7 +4,9 @@ import Cookies from "js-cookie";
 
 const FeedbackAnalysis = () => {
   const [feedbacks, setFeedbacks] = useState([]);
-  const therapistEmail = Cookies.get("email");
+
+  const userStr = localStorage.getItem("user");
+  const therapistEmail = userStr ? JSON.parse(userStr).email : null;
 
   useEffect(() => {
     const fetchFeedbacks = async () => {

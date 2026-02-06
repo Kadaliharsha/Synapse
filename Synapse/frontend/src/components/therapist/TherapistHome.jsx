@@ -1,96 +1,127 @@
 import React, { useEffect, useState } from "react";
-import Cookies from "js-cookie";
-import API from "../../api/api.js";
+import API from "../../api/api";
 import { useNavigate } from "react-router-dom";
-import image1 from "../../assets/THome1.jpg";
-import image2 from "../../assets/THome2.jpeg";
+import AvailabilityManager from "./AvailabilityManager";
+import StatsWidgets from "./dashboard/StatsWidgets";
+import NextAppointmentCard from "./dashboard/NextAppointmentCard";
+import AppointmentInbox from "./dashboard/AppointmentInbox";
 
-const TherpistHome = () => {
+const TherapistHome = () => {
   const [userName, setUserName] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [therapistId, setTherapistId] = useState(null);
+  const [therapistEmail, setTherapistEmail] = useState(null);
+
+  const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate();
+
+  const fetchDashboardData = async (email) => {
+    try {
+      const response = await API.get(`/appointments?therapistEmail=${email}`);
+      if (response.status === 200) {
+        setAppointments(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching appointments:", error);
+    }
+  };
 
   useEffect(() => {
-    const email = Cookies.get("email");
+    const userStr = localStorage.getItem("user");
+    let email = null;
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        email = user.email;
+        setTherapistEmail(email);
+      } catch (e) {
+        console.error("Failed to parse user from localStorage", e);
+      }
+    }
+
     if (email) {
       setIsLoggedIn(true);
-      const handleUserName = async () => {
+      const fetchDetails = async () => {
         try {
-          const response = await API.get(`/therapist/${email}/name`);
+          const response = await API.get(`/therapist/${email}`);
           if (response.status === 200) {
-            console.log(response);
-            setUserName(response.data);
-          } else {
-            console.log("error");
+            setUserName(response.data.name);
+            setTherapistId(response.data.id);
+            // Fetch appointments after getting profile confirming validity
+            fetchDashboardData(email);
           }
         } catch (err) {
-          console.log(err);
+          console.error(err);
+        } finally {
+          setLoading(false);
         }
       };
-      handleUserName();
+      fetchDetails();
+    } else {
+      setLoading(false);
     }
-  });
-  const navigate = useNavigate(); // Initializing useNavigate
+  }, []);
 
-  // Handle the button click to navigate to the feedback page
-  const handleButtonClick = () => {
-    navigate("/appointments"); // Redirects to the feedback page
-  };
-  const handleFindSupportClick = () => {
-    navigate("/sessions");
-  };
+  // metrics
+  const pendingAppointments = appointments.filter(a => a.status === 'PENDING');
+
+  // Find next appointment
+  const nextAppointment = appointments
+    .filter(a => a.status === 'ACCEPTED')
+    .filter(a => new Date(`${a.date}T${a.time}`) > new Date())
+    .sort((a, b) => new Date(`${a.date}T${a.time}`) - new Date(`${b.date}T${b.time}`))
+  [0];
 
   return (
-    <div className="w-[95%] mt-[20px] h-[1200px] bg-white text-left m-auto">
-      <h1 className="pt-[30px] ml-[150px] text-6xl text-[#109948] font-medium">
-        {" "}
-        Welcome Dr.{isLoggedIn ? ` ${userName}` : ""}
-      </h1>
-      <div className="m-auto flex w-[80%] h-[550px] mt-10 drop-shadow-md">
-        <div className="w-full md:w-1/2 h-1/2 md:h-full b">
-          <img src={image1} alt="" className="w-[100%] h-[100%] object-cover" />
+    <div className="w-full max-w-[1600px] mx-auto p-6">
+      {/* Header */}
+      <div className="mb-8 flex justify-between items-end animate-fade-in-up">
+        <div>
+          <h1 className="text-4xl font-bold text-gray-800">
+            Welcome back, <span className="text-emerald-600">Dr. {userName.split(' ')[0]}</span>
+          </h1>
+          <p className="text-gray-500 mt-2">Here's what's happening in your practice today.</p>
         </div>
-        <div className="w-full md:w-1/2 h-1/2 md:h-full bg-gradient-to-r from-emerald-400 to-teal-300 text-center text-5xl relative">
-          <h2 className="mt-[180px] text-[#f6f6f6] text-left ml-[65px]">
-            Pending Appointments
-          </h2>
-          <p className="mt-[40px] text-[#f6f6f6] text-3xl text-left ml-[65px]">
-            Check your pending appointments and take the necessary action.
-          </p>
-          <div className="ml-[68px] mt-[40px] w-[240px] h-[50px] text-white bg-[#109948] hover:bg-[#008055]">
-            <button
-              type="button"
-              className="w-[100%] h-[50px] bg-[#1F1F1F] hover:bg-black text-white text-[18px] font-semibold"
-              onClick={handleButtonClick} // Set the onClick handler
-            >
-              Check Appointments
-            </button>
-          </div>
+        <div className="text-right">
+          <p className="font-medium text-gray-800">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
         </div>
       </div>
-      <div className="m-auto flex w-[80%] h-[500px] mt-10 drop-shadow-md bg-white">
-        <div className="w-full md:w-1/2 h-1/2 md:h-full bg-white text-center">
-          <h2 className="text-6xl mt-[160px] m-auto ml-[45px] text-left ">
-            Your Accepted Sessions
-          </h2>
-          <p className=" text-3xl ml-[33px] text-rigth m-auto mt-[30px] text-[#d3d3d3]">
-            Manage your upcoming sessions and provide support.
-          </p>
-          <div className="  ml-[47px] mt-[40px] w-[200px] h-[50px]  text-white bg-[#109948] hover:bg-[#008055]">
-            <button
-              type="submit"
-              className="w-[100%] h-[50px]  hover:bg-[#109948] bg-[#008055] rounded-[8px] text-white text-[18px] font-semibold"
-              onClick={handleFindSupportClick}
-            >
-              Accepted Sessions
-            </button>
+
+      {/* Stats Row */}
+      <div className="animate-slide-up">
+        <StatsWidgets />
+      </div>
+
+      {/* Main Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+        {/* Left Column (2/3) */}
+        <div className="lg:col-span-2 space-y-8 animate-slide-up" style={{ animationDelay: '0.1s' }}>
+          {/* Hero Card */}
+          <NextAppointmentCard appointment={nextAppointment} />
+
+          {/* Availability Manager */}
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            {therapistId && <AvailabilityManager therapistId={therapistId} />}
           </div>
         </div>
-        <div className="w-full md:w-1/2 h-1/2 md:h-full ">
-          <img src={image2} alt="" className="w-[100%] h-[100%] object-cover" />
+
+        {/* Right Column (1/3) */}
+        <div className="space-y-8 animate-slide-up" style={{ animationDelay: '0.2s' }}>
+          {/* Inbox */}
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 h-[500px] overflow-hidden">
+            <AppointmentInbox
+              appointments={pendingAppointments}
+              onAction={() => fetchDashboardData(therapistEmail)}
+            />
+          </div>
         </div>
+
       </div>
     </div>
   );
 };
 
-export default TherpistHome;
+export default TherapistHome;

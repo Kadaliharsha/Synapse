@@ -10,7 +10,8 @@ const ShowBlogs = () => {
   const [userDetails, setUserDetails] = useState({});
   const [currentIndex, setCurrentIndex] = useState(0);
   const [likedBlogs, setLikedBlogs] = useState([]);
-  const email = Cookies.get("email");
+  const userStr = localStorage.getItem("user");
+  const email = userStr ? JSON.parse(userStr).email : null;
 
   useEffect(() => {
     API.get("/user/blogs")

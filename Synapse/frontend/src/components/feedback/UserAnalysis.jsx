@@ -30,7 +30,7 @@ const Analysis = () => {
       if (storedUser) {
         email = JSON.parse(storedUser).email;
       } else {
-        email = Cookies.get("email");
+        email = null;
       }
 
       if (!email) return;

@@ -31,7 +31,8 @@ const FeedbackForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const email = Cookies.get("email");
+    const userStr = localStorage.getItem("user");
+    const email = userStr ? JSON.parse(userStr).email : null;
     if (!email) {
       setMessage({
         text: "You must be logged in to submit feedback.",
@@ -135,8 +136,8 @@ const FeedbackForm = () => {
                     <Icon
                       size={32}
                       className={`transition-colors ${formData[question] === score
-                          ? "text-yellow-500"
-                          : "text-gray-400"
+                        ? "text-yellow-500"
+                        : "text-gray-400"
                         }`}
                     />
                   </label>

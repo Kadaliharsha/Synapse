@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 import TherapistProfile from "../components/therapist/TherapistProfile";
 import FeedbackAnalysis from "../components/feedback/FeedbackAnalysis";
+import AvailabilityManager from "../components/therapist/AvailabilityManager";
 const TherapistDB = () => {
   const [user, setUser] = useState(""); // User name
   const [avatar, setAvatar] = useState(""); // Avatar URL
@@ -14,15 +15,31 @@ const TherapistDB = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Login state
   const [loading, setLoading] = useState(true);
   const [therapistData, setTherapistData] = useState({});
-  const userEmail = Cookies.get("email");
-  const userRole = Cookies.get("role");
+  const userStr = localStorage.getItem("user");
+  const parsedUser = userStr ? JSON.parse(userStr) : {};
+  const userEmail = parsedUser.email;
+  const userRole = parsedUser.roles ? parsedUser.roles[0] : null;
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!userEmail || userRole == "USER") {
+    const userStr = localStorage.getItem("user");
+    let storedEmail = null;
+    let storedRole = null;
+
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        storedEmail = user.email;
+        storedRole = user.roles && user.roles[0];
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    if (!storedEmail || storedRole === "USER") {
       navigate("/403");
     }
-  }, [userEmail, navigate]);
+  }, [navigate]);
   useEffect(() => {
     if (userEmail && userRole) {
       setRole(userRole);
@@ -69,6 +86,11 @@ const TherapistDB = () => {
       ) : (
         <>
           {therapistData && <TherapistProfile userData={therapistData} />}
+          {therapistData.id && (
+            <div className="w-[90%] mx-auto mt-10 mb-10">
+              <AvailabilityManager therapistId={therapistData.id} />
+            </div>
+          )}
           <FeedbackAnalysis />
 
           <Footer />

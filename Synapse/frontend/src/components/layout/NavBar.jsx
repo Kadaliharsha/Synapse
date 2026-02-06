@@ -75,6 +75,7 @@ const Navbar = ({ isLoggedIn, userName, avatar, role }) => {
 
             {role !== "THERAPIST" && (
               <>
+                <NavLink to="/therapists">Find Therapists</NavLink>
                 <NavLink to="/about">About Us</NavLink>
                 <NavLink to="/feedBack">Self-Care</NavLink>
                 <NavLink to="/blog">Blog</NavLink>
@@ -85,6 +86,7 @@ const Navbar = ({ isLoggedIn, userName, avatar, role }) => {
             {role === "THERAPIST" && (
               <>
                 <NavLink to="/appointments">Appointments</NavLink>
+                <NavLink to="/patients">Patients</NavLink>
                 <NavLink to="/sessions">Sessions</NavLink>
                 <NavLink to="/blog">Blog</NavLink>
               </>
@@ -121,7 +123,7 @@ const Navbar = ({ isLoggedIn, userName, avatar, role }) => {
                     <div className="absolute right-0 mt-4 w-56 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden animate-in fade-in slide-in-from-top-2">
                       <div className="p-4 border-b border-gray-50 bg-gray-50/50">
                         <p className="text-sm font-bold text-gray-800">{userName}</p>
-                        <p className="text-xs text-gray-500 truncate">{Cookies.get("email") || "user@example.com"}</p>
+                        <p className="text-xs text-gray-500 truncate">{JSON.parse(localStorage.getItem("user") || "{}").email || "user@example.com"}</p>
                       </div>
                       <div className="p-2 space-y-1">
                         <button onClick={handleUser} className="w-full text-left px-3 py-2 text-sm text-gray-600 hover:bg-emerald-50 hover:text-emerald-700 rounded-xl transition-colors">

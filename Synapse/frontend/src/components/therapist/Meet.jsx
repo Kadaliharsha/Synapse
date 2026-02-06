@@ -113,7 +113,8 @@ const Meet = () => {
     if (storedUser) {
       userEmail = JSON.parse(storedUser).email;
     } else {
-      userEmail = Cookies.get("email");
+      // Fallback or explicit null
+      userEmail = null;
     }
 
     if (!userEmail) {

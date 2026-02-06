@@ -3,8 +3,10 @@ import API from "../../api/api";
 import Cookies from "js-cookie";
 
 const SessionAppointments = () => {
+
   const [appointments, setAppointments] = useState([]);
-  const therapistEmail = Cookies.get("email");
+  const userStr = localStorage.getItem("user");
+  const therapistEmail = userStr ? JSON.parse(userStr).email : null;
 
   useEffect(() => {
     const fetchAcceptedAppointments = async () => {

@@ -17,7 +17,7 @@ const ADDE = ({ addContact }) => {
   const getUserEmail = () => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) return JSON.parse(storedUser).email;
-    return Cookies.get("email");
+    return null;
   };
 
   const userEmail = getUserEmail();

@@ -12,4 +12,5 @@ public class AppointmentRequest {
     private String time;
     private String message;
     private String status;
+    private String slotId; // Link to specific slot
 }
