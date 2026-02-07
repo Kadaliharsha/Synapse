@@ -60,7 +60,10 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOriginPatterns(Arrays.asList("*")); // Use patterns allows wildcard with credentials
+
+        config.setAllowedOrigins(
+                Arrays.asList("http://localhost:5173", "http://localhost:3000", "https://synapse-frontend.vercel.app"));
+
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(Arrays.asList("*"));
         config.setAllowCredentials(true); // Allow cookies/auth tokens
