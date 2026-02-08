@@ -48,7 +48,11 @@ const Login = () => {
         }
       }
     } catch (error) {
-      const errorMsg = error.response?.data || "Login failed.";
+      // Handle ErrorResponse object from backend
+      const errorData = error.response?.data;
+      const errorMsg = typeof errorData === 'string'
+        ? errorData
+        : errorData?.message || "Login failed.";
       setMessage({ text: errorMsg, type: "error" });
     } finally {
       setLoading(false);

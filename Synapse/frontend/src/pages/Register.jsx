@@ -93,9 +93,12 @@ const Register = () => {
       // Redirect to login, but tell Login page to send them to Home (Lobby) after
       navigate("/login?redirect=/");
     } catch (error) {
-      console.error(error);
-      const errorMsg = error.response ? error.response.data : "Signup failed. Please try again.";
-      setMessage(errorMsg);
+      // Handle ErrorResponse object from backend
+      const errorData = error.response?.data;
+      const errorMsg = typeof errorData === 'string'
+        ? errorData
+        : errorData?.message || "Signup failed.";
+      setMessage({ text: errorMsg, type: "error" });
     } finally {
       setLoading(false);
     }
