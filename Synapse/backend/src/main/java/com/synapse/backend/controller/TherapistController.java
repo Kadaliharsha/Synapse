@@ -69,19 +69,10 @@ public class TherapistController {
             @RequestParam(required = false) String gender,
             @RequestParam(required = false) Double maxPrice,
             @RequestParam(required = false) Double minRating) {
-        List<Therapist> therapists = therapistRepository.findAll();
 
-        // In-memory filtering (simple for MVP)
-        // For production, use Repository queries or Criteria API
-        List<Therapist> filtered = therapists.stream()
-                .filter(t -> specialization == null || (t.getSpecialization() != null
-                        && t.getSpecialization().toLowerCase().contains(specialization.toLowerCase())))
-                .filter(t -> gender == null || (t.getGender() != null && t.getGender().equalsIgnoreCase(gender)))
-                .filter(t -> maxPrice == null || (t.getPrice() != null && t.getPrice() <= maxPrice))
-                .filter(t -> minRating == null || (t.getRating() != null && t.getRating() >= minRating))
-                .toList();
+        List<Therapist> therapists = therapistRepository.findByFilters(specialization, gender, maxPrice, minRating);
 
-        return ResponseEntity.ok(filtered);
+        return ResponseEntity.ok(therapists);
     }
 
     @PutMapping("/{email}")
