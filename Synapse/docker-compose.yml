@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: synapse-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - synapse-network
+
+  backend:
+    build: ./backend
+    container_name: synapse-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/synapse_db
+      - JWT_SECRET=${JWT_SECRET:-synapse-dev-secret-key-must-be-at-least-32-characters-long}
+    depends_on:
+      - mongodb
+    networks:
+      - synapse-network
+
+  frontend:
+    build: ./frontend
+    container_name: synapse-frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+    networks:
+      - synapse-network
+
+volumes:
+  mongodb_data:
+
+
+networks:
+  synapse-network:
+    driver: bridge
