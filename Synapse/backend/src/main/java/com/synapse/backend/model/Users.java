@@ -1,13 +1,21 @@
 package com.synapse.backend.model;
 
-// Removed Lombok annotations
-import org.bson.types.Binary;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-// Removed Lombok annotations
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Document(collection = "users")
 public class Users {
     @Id
@@ -17,64 +25,12 @@ public class Users {
     private Integer age;
     private String password;
     private String gender;
-    private String profilePicture; // Use Binary to store profile picture
+    private String profilePicture;
     private List<String> roles;
 
-    // Add missing getters
-    public String getName() {
-        return name;
-    }
+    @CreatedDate
+    private LocalDateTime createdAt;
 
-    public Integer getAge() {
-        return age;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public String getProfilePicture() {
-        return profilePicture;
-    }
-
-    public List<String> getRoles() {
-        return roles;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    // Add missing setters
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public void setProfilePicture(String profilePicture) {
-        this.profilePicture = profilePicture;
-    }
-
-    public void setRoles(List<String> roles) {
-        this.roles = roles;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
 }

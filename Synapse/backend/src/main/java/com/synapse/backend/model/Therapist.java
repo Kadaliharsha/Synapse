@@ -1,15 +1,21 @@
 package com.synapse.backend.model;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.bson.types.Binary;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-@Getter
-@Setter
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Document(collection = "therapist")
 public class Therapist {
     @Id
@@ -21,12 +27,17 @@ public class Therapist {
     private String password;
     private String profilePicture;
     private List<String> roles;
-    
-    // New Profile Fields
+
     private String bio;
     private Double price;
     private String gender;
-    private Integer experience; // Years of experience
+    private Integer experience;
     private Double rating;
     private Integer reviewCount;
+
+    @CreatedDate
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
 }
