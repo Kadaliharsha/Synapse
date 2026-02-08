@@ -93,12 +93,11 @@ const Register = () => {
       // Redirect to login, but tell Login page to send them to Home (Lobby) after
       navigate("/login?redirect=/");
     } catch (error) {
-      // Handle ErrorResponse object from backend
       const errorData = error.response?.data;
       const errorMsg = typeof errorData === 'string'
         ? errorData
         : errorData?.message || "Signup failed.";
-      setMessage({ text: errorMsg, type: "error" });
+      setMessage(errorMsg);
     } finally {
       setLoading(false);
     }
