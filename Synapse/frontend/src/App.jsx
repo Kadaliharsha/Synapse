@@ -11,9 +11,9 @@ import Home from "./pages/Home";
 import SOS from "./pages/SOS";
 import FeedBack from "./pages/FeedBack";
 import Blog from "./pages/Blog";
-import Forbidden from "./pages/Frobidden";
+import Forbidden from "./pages/Forbidden";
 import TherapistDB from "./pages/TherapistDB";
-import Appoinment from "./pages/Appoinment";
+import Appointment from "./pages/Appointment";
 import Sessions from "./pages/Sessions";
 import About from "./pages/About";
 import TherapistDirectory from "./pages/TherapistDirectory";
@@ -46,7 +46,7 @@ function App() {
           } />
           <Route path="/appointments" element={
             <ProtectedRoute allowedRoles={["USER"]}>
-              <Appoinment />
+              <Appointment />
             </ProtectedRoute>
           } />
           <Route path="/feedBack" element={

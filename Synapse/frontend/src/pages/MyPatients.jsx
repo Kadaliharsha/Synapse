@@ -1,34 +1,29 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Navbar from "../components/layout/NavBar"; // Adjust
 import PatientList from "../components/therapist/patients/PatientList";
-import API from "../api/api";
+import { useAuth } from "../context/AuthContext";
 
 const MyPatients = () => {
-    const [user, setUser] = useState(null);
-    const [role, setRole] = useState(null);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [avatar, setAvatar] = useState("");
-    const [therapistEmail, setTherapistEmail] = useState(null);
+    const { user, isAuthenticated, loading } = useAuth();
 
-    useEffect(() => {
-        const userStr = localStorage.getItem("user");
-        if (userStr) {
-            try {
-                const parsedUser = JSON.parse(userStr);
-                setTherapistEmail(parsedUser.email);
-                setUser(parsedUser.name);
-                setRole(parsedUser.roles ? parsedUser.roles[0] : "THERAPIST");
-                setAvatar(parsedUser.profilePicture || ""); // Fallback if not in local storage, might need fetch
-                setIsLoggedIn(true);
-            } catch (e) {
-                console.error("Error parsing user", e);
-            }
-        }
-    }, []);
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+            </div>
+        );
+    }
+
+    if (!isAuthenticated) return null;
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col">
-            <Navbar isLoggedIn={isLoggedIn} userName={user} role={role} avatar={avatar} />
+            <Navbar
+                isLoggedIn={isAuthenticated}
+                userName={user?.name}
+                role={user?.roles?.[0]}
+                avatar="" // TODO: Fetch full profile if avatar needed
+            />
 
             <main className="flex-grow container mx-auto px-4 py-8 mt-20 max-w-[1400px]">
                 <div className="mb-8">
@@ -36,12 +31,8 @@ const MyPatients = () => {
                     <p className="text-gray-500">View and manage your patient records.</p>
                 </div>
 
-                {therapistEmail ? (
-                    <PatientList therapistEmail={therapistEmail} />
-                ) : (
-                    <div className="text-center py-20 text-gray-500">
-                        Please log in as a therapist to view this page.
-                    </div>
+                {user?.email && (
+                    <PatientList therapistEmail={user.email} />
                 )}
             </main>
         </div>

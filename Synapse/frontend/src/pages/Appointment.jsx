@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import Navbar from "../components/layout/NavBar";
-import FeedbackForm from "../components/feedback/FeedbackForm";
 import Footer from "../components/layout/Footer";
 import { useAuth } from "../context/AuthContext";
+import PendingAppointments from "../components/therapist/PendingAppointments";
 
-const FeedBack = () => {
+const Appointment = () => {
   const { user, isAuthenticated, loading } = useAuth();
 
   if (loading) {
@@ -22,7 +22,7 @@ const FeedBack = () => {
   if (!isAuthenticated) return null;
 
   return (
-    <>
+    <div className="min-h-screen flex flex-col">
       <Navbar
         isLoggedIn={isAuthenticated}
         userName={user?.name}
@@ -30,10 +30,13 @@ const FeedBack = () => {
         role={user?.roles?.[0]}
       />
 
-      <FeedbackForm />
+      <main className="flex-grow bg-gray-50 pb-12">
+        <PendingAppointments />
+      </main>
+
       <Footer />
-    </>
+    </div>
   );
 };
 
-export default FeedBack;
+export default Appointment;
